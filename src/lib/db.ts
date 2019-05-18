@@ -68,13 +68,13 @@ export class InodeDatabase {
       try {
         const inode = await generateInode();
         await this.db.inodes.add(inode);
-        (cb as SyncUpdateSuccessCallback)(undefined, {
+        cb(undefined, {
           inode,
           total: TOTAL,
           numSynced: i + 1
         });
       } catch (err) {
-        (cb as SyncUpdateErrorCallback)(err as Error, undefined);
+        cb(err as Error, undefined);
       }
     }
   }

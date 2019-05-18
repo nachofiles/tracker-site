@@ -20,7 +20,11 @@ class App extends Component {
           <Title>ETHNYC Tracker</Title>
         </div>
         <div className="App-content">
-          <Search />
+          <Search
+            onSearchQuery={searchQuery =>
+              console.log("the search query result is:", searchQuery)
+            }
+          />
           {/* <GetResults /> */}
           {/* <Download />
           <Upload /> */}

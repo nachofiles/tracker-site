@@ -6,23 +6,16 @@ import { Input } from "antd";
 const SearchBar = Input.Search;
 
 interface Props {
-  searchValue: string;
+  onSearchQuery(results: string): void;
 }
 
-interface State {
-  returnResults?: boolean;
-}
-
-export class Search extends Component<State> {
-  public state = {
-    returnResults: false
-  };
+export class Search extends Component<Props> {
   // this.handleSearch = this.handleSearch.bind(this);
 
-  public handleSearch = (e: any) => {
-    this.setState({ returnResults: true });
-    console.log(e);
+  public handleSearch = (value: string) => {
+    this.props.onSearchQuery(value);
   };
+
   render() {
     return (
       <div className="Search-content">
@@ -32,7 +25,6 @@ export class Search extends Component<State> {
           size="large"
           style={{ width: 700 }}
           onSearch={e => this.handleSearch(e)}
-          // onSearch={this.handleSearch}
         />
       </div>
     );
