@@ -1,45 +1,45 @@
-import React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Table } from 'antd';
-import './SearchResults.css';
-import { inject, observer } from 'mobx-react';
-import { RootStore } from '../../store/rootStore';
-import { ColumnProps } from 'antd/lib/table';
-import filesize from 'filesize';
-import { Link } from 'react-router-dom';
-import { Inode } from '../../lib/db';
+import React from "react";
+import { RouteComponentProps } from "react-router";
+import { Table } from "antd";
+import "./SearchResults.css";
+import { inject, observer } from "mobx-react";
+import { RootStore } from "../../store/rootStore";
+import { ColumnProps } from "antd/lib/table";
+import filesize from "filesize";
+import { Link } from "react-router-dom";
+import { Inode } from "../../lib/db";
 
 const columns: ColumnProps<Inode>[] = [
   {
-    title: 'Title',
-    dataIndex: 'title',
-    key: 'title',
+    title: "Title",
+    dataIndex: "title",
+    key: "title",
     render: (title: string, record) => {
       return <Link to={`/file/${record.id}`}>{title}</Link>;
     }
   },
   {
-    title: 'Category',
-    dataIndex: 'category',
-    key: 'category'
+    title: "Category",
+    dataIndex: "category",
+    key: "category"
   },
   {
-    title: 'File Type',
-    dataIndex: 'mimeType',
-    key: 'fileType'
+    title: "File Type",
+    dataIndex: "mimeType",
+    key: "fileType"
   },
   {
-    title: 'File Size',
-    dataIndex: 'sizeBytes',
-    key: 'fileSize',
+    title: "File Size",
+    dataIndex: "sizeBytes",
+    key: "fileSize",
     render: (size: number) => {
       return filesize(size);
     }
   },
   {
-    title: 'Author',
-    key: 'author',
-    dataIndex: 'author'
+    title: "Author",
+    key: "author",
+    dataIndex: "author"
   }
 ];
 
@@ -51,7 +51,7 @@ interface State {
   currPage: number;
 }
 
-@inject('store')
+@inject("store")
 @observer
 export class SearchResults extends React.Component<Props, State> {
   public state: State = {
@@ -64,7 +64,7 @@ export class SearchResults extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const prevQueryParams = new URLSearchParams(prevProps.location.search);
-    const prevQuery = prevQueryParams.get('q');
+    const prevQuery = prevQueryParams.get("q");
 
     if (
       this.getQuery() === prevQuery &&
@@ -93,16 +93,12 @@ export class SearchResults extends React.Component<Props, State> {
 
   private getQuery() {
     const queryParams = new URLSearchParams(this.props.location.search);
-    return queryParams.get('q');
+    return queryParams.get("q");
   }
-
-  private getLatest = () => {
-    this.inodeStore.getLatest({ page: this.state.currPage });
-  };
 
   public render() {
     return (
-      <div>
+      <div className="Table-container">
         <Table
           style={{}}
           columns={columns}

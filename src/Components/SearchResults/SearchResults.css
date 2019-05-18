@@ -2,12 +2,8 @@
 
 .Table-container {
   display: flex;
-  height: 80vh;
   justify-content: center;
-  align-content: center;
-  align-items: center;
 }
-
 .Table-content {
   width: 90em;
   text-align: left;

@@ -1,36 +1,50 @@
 .container {
-    height: 100vh;
-    width: 100vw;
+  height: 100vh;
+  width: 100vw;
 
-    display: grid;
+  display: grid;
 
-    grid-template-areas: "header header header" "main main main" "footer footer footer";
+  grid-template-areas: "header header header" "main main main" "footer footer footer";
 
-    grid-template-columns: 200px 1fr 200px;
-    grid-template-rows: auto 1fr auto;
-    grid-gap: 10px;
+  grid-template-columns: 200px 1fr 200px;
+  grid-template-rows: auto 1fr auto;
+  grid-gap: 10px;
 }
 
 .container > header {
-    grid-area: header;
+  grid-area: header;
 }
 
 .container > nav {
-    grid-area: nav;
+  grid-area: nav;
 }
 
 .container > main {
-    grid-area: main;
+  grid-area: main;
 }
 
 .container > aside {
-    grid-area: aside;
+  grid-area: aside;
 }
 
 .container > footer {
-    grid-area: footer;
+  grid-area: footer;
 }
 
 .ant-table-row {
-    background-color: #ffff;
+  background-color: #ffff;
+}
+
+.ant-table-wrapper {
+  width: 75%;
+  background-color: #ffff;
+  font-family: PT Sans, sans-serif;
+  overflow: hidden;
+  border-radius: 1.5rem/2rem;
+  box-shadow: 8px 10px 16px rgba(0, 0, 0, 0.1);
+  transform: translateZ(0);
+}
+
+.ant-pagination {
+  padding-right: 3em;
 }

@@ -1,4 +1,4 @@
-import { Typography, Button } from "antd";
+import { Typography, Button, Tag } from "antd";
 import React from "react";
 import "./Download.css";
 
@@ -32,12 +32,16 @@ export function Download() {
             sites still in their infancy.{" "}
           </div>
           <div className="Download-footer">
-            <div className="Download-file-type">PDF</div>
-            <div className="Download-file-size">183649q8</div>
+            {" "}
+            <Tag color="volcano">Education</Tag>
+            <Tag color="magenta">PDF</Tag>{" "}
+            <Tag color="green">FILESIZE: 32gb</Tag>
+            <Tag color="purple">
+              {" "}
+              ID:
+              qETKm0D$73%1&jf6vPvaM9iMV9jPIpvnq&ii^F(YP1au4DjNpRmuCtbIl6jvwrVu
+            </Tag>
           </div>
-        </div>
-        <div className="Download-id">
-          ID: qETKm0D$73%1&jf6vPvaM9iMV9jPIpvnq&ii^F(YP1au4DjNpRmuCtbIl6jvwrVu
         </div>
         <div className="Download-button">
           {" "}

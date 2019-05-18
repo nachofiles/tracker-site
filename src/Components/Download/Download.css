@@ -47,11 +47,7 @@
 .Download-footer {
   padding-top: 4em;
   display: flex;
-  justify-content: space-between;
-}
-
-.Download-id {
-  padding: 2em;
+  justify-content: center;
 }
 
 .Download-button {
