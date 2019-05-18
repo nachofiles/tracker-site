@@ -1,6 +1,6 @@
 import { RootStore } from "./rootStore";
 import { Inode, InodeDatabase, Pageable } from "../lib/db";
-import { action, computed, observable } from "mobx";
+import { action, computed, observable, autorun } from "mobx";
 
 interface SearchParams {
   query: string;
@@ -30,6 +30,9 @@ export class InodeStore {
   // total number of pages from the search result
   @observable
   public pages: number = 1;
+
+  @observable
+  public total: number = 0;
   // the number of results to show per page
   public resultsPerPage: number;
 
@@ -46,16 +49,23 @@ export class InodeStore {
   constructor(
     rootStore: RootStore,
     contractAddress: string,
-    resultsPerPage: number
+    resultsPerPage: number,
+    autoSync: boolean = false
   ) {
     this.db = new InodeDatabase(contractAddress);
     this.resultsPerPage = resultsPerPage;
     this.rootStore = rootStore;
+
+    if (autoSync) {
+      this.syncWatcher();
+    }
   }
 
   @computed
-  public get isDbSyncing(): boolean {
-    return this.inodesSynced === this.totalInodesToSync;
+  public get isDbSynced(): boolean {
+    const isSynced = this.inodesSynced === this.totalInodesToSync;
+    console.log("isDbSynced:", isSynced);
+    return isSynced;
   }
 
   /**
@@ -88,6 +98,15 @@ export class InodeStore {
     initiator();
   }
 
+  private syncWatcher() {
+    autorun(() => {
+      if (!this.isDbSynced) {
+        console.log("Running store init");
+        this.init();
+      }
+    });
+  }
+
   /**
    * Search for paginated inode results
    * @param params Search parameters
@@ -114,6 +133,8 @@ export class InodeStore {
 
     const searchResults = await this.db.latest(limit, offset);
 
+    console.log("[getLatest]", searchResults);
+
     this.updateSearchResults({
       total: searchResults.total,
       data: searchResults.data
@@ -125,21 +146,30 @@ export class InodeStore {
    */
   public async clear() {
     await this.db.clearData();
-    this.searchResults = [];
+    this.clearResults();
   }
 
-  @action
+  @action("updateSyncProgress")
   private updateSyncProgress(params: UpdateSyncAction): void {
+    console.log("updateSyncProgress:", params);
     this.inodesSynced = params.inodesSynced;
     this.totalInodesToSync = params.totalInodes;
   }
 
-  @action
+  @action("updateSearchResults")
   private updateSearchResults(params: UpdateSearchResultsAction): void {
+    console.log("updateSearchResults:", params);
     this.searchResults = params.data;
-    this.pages = Math.ceil(params.total / this.resultsPerPage);
+    this.total = params.total;
+    this.pages = Math.floor(params.total / this.resultsPerPage);
   }
 
-  @action
-  private clearResults() {}
+  @action("clearResults")
+  private clearResults() {
+    console.log("clearResults");
+
+    this.searchResults = [];
+    this.totalInodesToSync = Infinity;
+    this.inodesSynced = 0;
+  }
 }
