@@ -1,0 +1,36 @@
+@import "~antd/dist/antd.css";
+
+.Download-container {
+  display: flex;
+  justify-content: center;
+}
+
+.Download-content {
+  width: 50em;
+}
+
+.Download-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.Download-title-specs {
+  display: flex;
+  justify-content: space-between;
+}
+.Download-header-created {
+  text-align: right;
+}
+
+.Download-sub-header {
+  display: flex;
+}
+
+.Download-description {
+  text-align: center;
+}
+
+.Download-footer {
+  display: flex;
+  justify-content: space-between;
+}

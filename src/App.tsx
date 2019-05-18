@@ -20,11 +20,11 @@ class App extends Component {
               <Route path="/" component={Search} exact />
               <Route path="/search" component={SearchResults} exact />
               <Route path="/file/:id" render={() => "File!"} />
+              <Route path="/download" component={Download} exact />
             </Switch>
           </Router>
           {/* <GetResults /> */}
-          {/* <Download />
-          <Upload /> */}
+          {/* <Upload /> */}
         </div>
       </div>
     );
