@@ -1,6 +1,6 @@
 import { RootStore } from "./rootStore";
 import { Inode, InodeDatabase, Pageable } from "../lib/db";
-import { action, computed, observable } from "mobx";
+import { action, computed, observable, autorun } from "mobx";
 
 interface SearchParams {
   query: string;
@@ -46,16 +46,21 @@ export class InodeStore {
   constructor(
     rootStore: RootStore,
     contractAddress: string,
-    resultsPerPage: number
+    resultsPerPage: number,
+    autoSync: boolean = false
   ) {
     this.db = new InodeDatabase(contractAddress);
     this.resultsPerPage = resultsPerPage;
     this.rootStore = rootStore;
+
+    if (autoSync) {
+      this.syncWatcher();
+    }
   }
 
   @computed
   public get isDbSyncing(): boolean {
-    return this.inodesSynced === this.totalInodesToSync;
+    return this.inodesSynced !== this.totalInodesToSync;
   }
 
   /**
@@ -86,6 +91,14 @@ export class InodeStore {
     };
 
     initiator();
+  }
+
+  private syncWatcher() {
+    autorun(() => {
+      if (!this.isDbSyncing) {
+        this.init();
+      }
+    });
   }
 
   /**
@@ -125,7 +138,7 @@ export class InodeStore {
    */
   public async clear() {
     await this.db.clearData();
-    this.searchResults = [];
+    this.clearResults();
   }
 
   @action
@@ -141,5 +154,9 @@ export class InodeStore {
   }
 
   @action
-  private clearResults() {}
+  private clearResults() {
+    this.searchResults = [];
+    this.totalInodesToSync = Infinity;
+    this.inodesSynced = 0;
+  }
 }
