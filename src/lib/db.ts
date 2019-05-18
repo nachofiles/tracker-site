@@ -62,7 +62,6 @@ class InodeDexie extends Dexie {
         "title",
         "description",
         "category",
-        "createdAt",
         "mimeType",
         "sizeBytes",
         "author",
@@ -77,15 +76,14 @@ class InodeDexie extends Dexie {
 export class InodeDatabase {
   private contractAddress: string;
   private db: InodeDexie;
-  private numSynced: number;
-  private total: number;
+  private numSynced: number = 0;
+  private total: number = 0;
   private ipfs: IPFS;
+  private startingIpfs: boolean = false;
 
   constructor(contractAddress: string) {
-    console.log('Fuuuuck');
     this.contractAddress = contractAddress;
     this.db = new InodeDexie(`inodes-${contractAddress}`);
-    this.total = 0;
     this.numSynced = parseInt(localStorage.getItem(`inodes-index-${contractAddress}`) || '0', 10);
     this.ipfs = new IPFS({ start: false });
   }
@@ -104,7 +102,7 @@ export class InodeDatabase {
     this.total = total.toNumber();
 
     await this.startIPFS();
-    for (let i = 0; i < this.total; i++) {
+    for (let i = this.numSynced; i < this.total; i++) {
       const metaData = await contract.functions.allFileMetadata(i);
       const cid = getIpfsHashFromBytes32(metaData.ipfsHash);
       try {
