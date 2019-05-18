@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from "react-router";
 import "./Search.css";
-import { Input } from "antd";
+import { Input, Button } from "antd";
 
 const SearchBar = Input.Search;
-
 
 export class Search extends Component<RouteComponentProps> {
   public handleSearch = (value: string) => {

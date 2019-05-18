@@ -6,19 +6,9 @@
   background-image: linear-gradient(to right, #ddd6f3, #faaca8);
   height: 100vh;
 }
-
 .App-header {
   text-align: left;
 }
-
 .ant-table-row {
   background-color: #ffff;
-}
-
-.ant-btn {
-  background-color: #019dc4;
-}
-
-.ant-btn:hover {
-  opacity: 2;
 }
