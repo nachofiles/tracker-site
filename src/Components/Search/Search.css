@@ -1,7 +1,7 @@
 @import "~antd/dist/antd.css";
 
 .Search-content {
-  height: 90vh;
+  height: 80vh;
   display: flex;
   justify-content: center;
   align-content: center;

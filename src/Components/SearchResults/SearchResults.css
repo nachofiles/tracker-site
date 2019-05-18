@@ -1,0 +1,16 @@
+@import "~antd/dist/antd.css";
+
+.Table-container {
+  display: flex;
+  justify-content: center;
+}
+
+.Table-content {
+  width: 90em;
+  text-align: left;
+}
+
+.Table-header {
+  display: flex;
+  justify-content: flex-end;
+}

@@ -1,1 +1,1 @@
-export {SearchResults} from './Table'
+export { SearchResults } from "./SearchResults";

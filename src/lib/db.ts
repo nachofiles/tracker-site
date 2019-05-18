@@ -66,7 +66,8 @@ class InodeDexie extends Dexie {
         "mimeType",
         "sizeBytes",
         "author",
-        "dataUri"
+        "dataUri",
+        "createdAt"
       ].join(",")
     });
     this.inodes = this.table("inodes");
