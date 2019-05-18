@@ -1,5 +1,4 @@
-import Dexie from 'dexie';
-import { number } from 'prop-types';
+import Dexie from "dexie";
 
 export interface Inode {
   id: string;
@@ -38,15 +37,15 @@ export class InodeDatabase {
     this.db = new Dexie(`inodes-${contractAddr}`);
     this.db.version(1).stores({
       inodes: [
-        'id',
-        'title',
-        'description',
-        'category',
-        'mimeType',
-        'sizeBytes',
-        'author',
-        'dataUri',
-      ].join(','),
+        "id",
+        "title",
+        "description",
+        "category",
+        "mimeType",
+        "sizeBytes",
+        "author",
+        "dataUri"
+      ].join(",")
     });
   }
 
@@ -57,30 +56,27 @@ export class InodeDatabase {
   getSyncState(): Promise<SyncState> {
     return Promise.resolve({
       numSynced: 0,
-      total: 0,
+      total: 0
     });
   }
 
   search(
     query: string,
     limit: number = 10,
-    offset: number = 0,
+    offset: number = 0
   ): Promise<Pageable<Inode>> {
     return Promise.resolve({
       data: [],
       total: 0,
-      end: true,
+      end: true
     });
   }
 
-  latest(
-    limit: number = 10,
-    offset: number = 0,
-  ): Promise<Pageable<Inode>> {
+  latest(limit: number = 10, offset: number = 0): Promise<Pageable<Inode>> {
     return Promise.resolve({
       data: [],
       total: 0,
-      end: true,
+      end: true
     });
   }
 }
