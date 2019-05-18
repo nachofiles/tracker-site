@@ -13,4 +13,4 @@ ReactDOM.render(<App />, document.getElementById('root'));
 serviceWorker.unregister();
 
 
-(window as any).db = new InodeDatabase('0x0');
+(window as any).db = new InodeDatabase('0xF337f1C8f8f0850Cd8eca577730f725C6E6FA451');
