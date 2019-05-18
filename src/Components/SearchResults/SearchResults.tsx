@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router";
-import { Table } from "antd";
+import { Table, Button } from "antd";
 import "./SearchResults.css";
 import { inject, observer } from "mobx-react";
 import { RootStore } from "../../store/rootStore";
