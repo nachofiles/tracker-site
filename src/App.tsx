@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Download, Search, GetResults, Upload } from "./Components/";
+import { HashRouter as Router, Switch, Route } from 'react-router-dom';
+import { Download, Search, SearchResults, Upload } from "./Components/";
 import "./App.css";
 
 import { Typography } from "antd";
@@ -7,12 +8,6 @@ import { Typography } from "antd";
 const { Title } = Typography;
 
 class App extends Component {
-  state = { searchTerm: "" };
-
-  public getSearchResults() {
-    return <GetResults />;
-  }
-
   render() {
     return (
       <div className="App">
@@ -20,11 +15,13 @@ class App extends Component {
           <Title>ETHNYC Tracker</Title>
         </div>
         <div className="App-content">
-          <Search
-            onSearchQuery={searchQuery =>
-              console.log("the search query result is:", searchQuery)
-            }
-          />
+          <Router>
+            <Switch>
+              <Route path="/" component={Search} exact />
+              <Route path="/search" component={SearchResults} exact />
+              <Route path="/file/:id" render={() => 'File!'} />
+            </Switch>
+          </Router>
           {/* <GetResults /> */}
           {/* <Download />
           <Upload /> */}

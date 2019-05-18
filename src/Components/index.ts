@@ -1,4 +1,4 @@
 export { Download } from "./Download";
 export { Search } from './Search';
-export { GetResults } from './TableResults'
+export { SearchResults } from './SearchResults'
 export { Upload } from './Upload'
