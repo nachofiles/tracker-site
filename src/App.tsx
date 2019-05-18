@@ -3,7 +3,7 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { Download, Search, SearchResults, Upload } from "./Components/";
 import "./App.css";
 
-import { Typography } from "antd";
+import { Typography, Button, Icon } from "antd";
 import { RootStore } from "./store/rootStore";
 import { observer, Provider } from "mobx-react";
 
@@ -17,7 +17,18 @@ class App extends Component {
       <Provider store={this.store}>
         <div className="App">
           <div className="App-header">
-            <Title>ETHNYC Tracker</Title>
+            ETHNYC TRACKER
+            <div className="App-links">
+              <a
+                href="https://github.com/ethny-tracker/ethny"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <Button size="large" type="link" ghost>
+                  <Icon type="github" style={{ fontSize: "50px" }} />
+                </Button>
+              </a>
+            </div>
           </div>
           <div className="App-content">
             <Router>

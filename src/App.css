@@ -8,6 +8,10 @@
 }
 .App-header {
   text-align: left;
+  font-family: "Julius Sans One", sans-serif;
+  font-size: 42px;
+  display: flex;
+  justify-content: space-between;
 }
 .ant-table-row {
   background-color: #ffff;
