@@ -6,7 +6,7 @@ export class RootStore {
 
   constructor() {
     configure({
-      enforceActions: true
+      enforceActions: "observed"
     });
 
     this.inode = new InodeStore(this, "", 10, true);
