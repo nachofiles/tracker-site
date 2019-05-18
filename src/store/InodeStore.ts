@@ -27,9 +27,6 @@ export class InodeStore {
   // results of the search request
   @observable
   public searchResults: Inode[] = [];
-  // total number of pages from the search result
-  @observable
-  public pages: number = 1;
 
   @observable
   public total: number = 0;
@@ -113,7 +110,7 @@ export class InodeStore {
    */
   public async search(params: SearchParams): Promise<void> {
     const limit = this.resultsPerPage;
-    const offset = this.resultsPerPage * params.page;
+    const offset = this.resultsPerPage * (params.page - 1);
 
     const searchResults = await this.db.search(params.query, limit, offset);
 
@@ -160,8 +157,8 @@ export class InodeStore {
   private updateSearchResults(params: UpdateSearchResultsAction): void {
     console.log("updateSearchResults:", params);
     this.searchResults = params.data;
+    console.log(params.total);
     this.total = params.total;
-    this.pages = Math.floor(params.total / this.resultsPerPage);
   }
 
   @action("clearResults")
