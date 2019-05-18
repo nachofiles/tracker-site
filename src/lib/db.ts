@@ -28,14 +28,7 @@ export type SyncUpdate = {
   inode: Inode;
 } & SyncState;
 
-export type SyncUpdateSuccessCallback = (
-  err: undefined,
-  data: SyncUpdate
-) => void;
-export type SyncUpdateErrorCallback = (err: Error, data: undefined) => void;
-export type SyncUpdateCallback =
-  | SyncUpdateSuccessCallback
-  | SyncUpdateErrorCallback;
+export type SyncUpdateCallback = (err?: Error, data?: SyncUpdate) => void;
 
 const TOTAL = 100;
 
