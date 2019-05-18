@@ -1,19 +1,14 @@
 import React, { Component } from "react";
+import { RouteComponentProps } from 'react-router';
 import "./Search.css";
-
 import { Input } from "antd";
 
 const SearchBar = Input.Search;
 
-interface Props {
-  onSearchQuery(results: string): void;
-}
 
-export class Search extends Component<Props> {
-  // this.handleSearch = this.handleSearch.bind(this);
-
+export class Search extends Component<RouteComponentProps> {
   public handleSearch = (value: string) => {
-    this.props.onSearchQuery(value);
+    this.props.history.push(`/search?query=${value}`);
   };
 
   render() {
