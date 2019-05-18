@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Button, Icon, Input, Typography } from "antd";
+import { Button, Icon, Input } from "antd";
 import { Search } from "history";
 import "./AppHeader.css";
 
