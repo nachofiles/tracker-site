@@ -1,6 +1,6 @@
 import { RootStore } from "./rootStore";
-import { Inode, InodeDatabase, Pageable } from "../lib/db";
-import { action, computed, observable, autorun } from "mobx";
+import { Inode, InodeDatabase } from "../lib/db";
+import { action, computed, observable, autorun, runInAction } from "mobx";
 
 interface SearchParams {
   query: string;
@@ -27,6 +27,9 @@ export class InodeStore {
   // results of the search request
   @observable
   public searchResults: Inode[] = [];
+
+  @observable
+  public loadingSearchResults: boolean = false;
 
   @observable
   public total: number = 0;
@@ -112,6 +115,10 @@ export class InodeStore {
     const limit = this.resultsPerPage;
     const offset = this.resultsPerPage * (params.page - 1);
 
+    runInAction(() => {
+      this.loadingSearchResults = true;
+    });
+
     const searchResults = await this.db.search(params.query, limit, offset);
 
     this.updateSearchResults({
@@ -128,6 +135,9 @@ export class InodeStore {
     const limit = this.resultsPerPage;
     const offset = this.resultsPerPage * params.page;
 
+    runInAction(() => {
+      this.loadingSearchResults = true;
+    });
     const searchResults = await this.db.latest(limit, offset);
 
     console.log("[getLatest]", searchResults);
@@ -159,6 +169,7 @@ export class InodeStore {
     this.searchResults = params.data;
     console.log(params.total);
     this.total = params.total;
+    this.loadingSearchResults = false;
   }
 
   @action("clearResults")

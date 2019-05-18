@@ -121,6 +121,7 @@ export class SearchResults extends React.Component<Props, State> {
               total: this.inodeStore.total,
               onChange: page => this.setState({ currPage: page })
             }}
+            loading={this.props.store.inode.loadingSearchResults}
             rowKey="id"
           />
         </div>
