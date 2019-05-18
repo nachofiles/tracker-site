@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { HashRouter as Router, Switch, Route } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { Download, Search, SearchResults, Upload } from "./Components/";
 import "./App.css";
 
@@ -19,7 +19,7 @@ class App extends Component {
             <Switch>
               <Route path="/" component={Search} exact />
               <Route path="/search" component={SearchResults} exact />
-              <Route path="/file/:id" render={() => 'File!'} />
+              <Route path="/file/:id" render={() => "File!"} />
             </Switch>
           </Router>
           {/* <GetResults /> */}
