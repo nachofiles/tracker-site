@@ -27,6 +27,8 @@ export class InodeStore {
   // results of the search request
   @observable
   public searchResults: Inode[] = [];
+
+  @observable
   public loadingSearchResults: boolean = false;
 
   @observable
