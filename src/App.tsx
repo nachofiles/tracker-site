@@ -1,16 +1,24 @@
-import React, { Component } from 'react';
-import {Download, Search, GetResults, Upload } from './Components/'
-import './App.css';
+import React, { Component } from "react";
+import { Download, Search, GetResults, Upload } from "./Components/";
+import "./App.css";
+
+import { Typography } from "antd";
+
+const { Title } = Typography;
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <Search />
-        <GetResults />
-        <Download />
-        <Upload />
-        
+        <div className="App-header">
+          <Title>ETHNYC Tracker</Title>
+        </div>
+        <div className="App-content">
+          <Search />
+          {/* <GetResults />
+          <Download />
+          <Upload /> */}
+        </div>
       </div>
     );
   }
