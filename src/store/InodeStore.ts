@@ -30,6 +30,9 @@ export class InodeStore {
   // total number of pages from the search result
   @observable
   public pages: number = 1;
+
+  @observable
+  public total: number = 0;
   // the number of results to show per page
   public resultsPerPage: number;
 
@@ -157,7 +160,8 @@ export class InodeStore {
   private updateSearchResults(params: UpdateSearchResultsAction): void {
     console.log("updateSearchResults:", params);
     this.searchResults = params.data;
-    this.pages = Math.ceil(params.total / this.resultsPerPage);
+    this.total = params.total;
+    this.pages = Math.floor(params.total / this.resultsPerPage);
   }
 
   @action("clearResults")
