@@ -7,6 +7,12 @@ import { Typography } from "antd";
 const { Title } = Typography;
 
 class App extends Component {
+  state = { searchTerm: "" };
+
+  public getSearchResults() {
+    return <GetResults />;
+  }
+
   render() {
     return (
       <div className="App">
@@ -15,8 +21,8 @@ class App extends Component {
         </div>
         <div className="App-content">
           <Search />
-          {/* <GetResults />
-          <Download />
+          {/* <GetResults /> */}
+          {/* <Download />
           <Upload /> */}
         </div>
       </div>
