@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router";
-import { Table, Button } from "antd";
+import { Table } from "antd";
 import "./SearchResults.css";
 import { inject, observer } from "mobx-react";
 import { RootStore } from "../../store/rootStore";
@@ -106,6 +106,7 @@ export class SearchResults extends React.Component<Props, State> {
               total: this.inodeStore.total,
               onChange: page => this.setState({ currPage: page })
             }}
+            loading={this.props.store.inode.loadingSearchResults}
             rowKey="id"
           />
         </div>
