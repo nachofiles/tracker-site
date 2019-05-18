@@ -15,12 +15,8 @@ export function Download() {
           <div className="Download-title-specs">
             <div className="Download-header-created">
               Created: May, 28, 2019
+              <div className="Download-author">ANON</div>
             </div>
-          </div>
-        </div>
-        <div className="Download-sub-header">
-          <div className="Download-category">
-            <Title level={4}>Educational Content</Title>
           </div>
         </div>
         <div className="Download-body">
@@ -36,14 +32,15 @@ export function Download() {
             sites still in their infancy.{" "}
           </div>
           <div className="Download-footer">
-            <div className="Download-author">ANON</div>
-
             <div className="Download-file-type">PDF</div>
             <div className="Download-file-size">183649q8</div>
           </div>
-          <div className="Download-id">
-            ID: qETKm0D$73%1&jf6vPvaM9iMV9jPIpvnq&ii^F(YP1au4DjNpRmuCtbIl6jvwrVu
-          </div>
+        </div>
+        <div className="Download-id">
+          ID: qETKm0D$73%1&jf6vPvaM9iMV9jPIpvnq&ii^F(YP1au4DjNpRmuCtbIl6jvwrVu
+        </div>
+        <div className="Download-button">
+          {" "}
           <Button type="primary" shape="round" icon="download" block>
             Download
           </Button>
