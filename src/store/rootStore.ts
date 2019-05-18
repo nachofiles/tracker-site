@@ -9,6 +9,6 @@ export class RootStore {
       enforceActions: "observed"
     });
 
-    this.inode = new InodeStore(this, "", 10, true);
+    this.inode = new InodeStore(this, '0xF337f1C8f8f0850Cd8eca577730f725C6E6FA451', 10, true);
   }
 }

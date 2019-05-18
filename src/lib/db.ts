@@ -82,6 +82,7 @@ export class InodeDatabase {
   private ipfs: IPFS;
 
   constructor(contractAddress: string) {
+    console.log('Fuuuuck');
     this.contractAddress = contractAddress;
     this.db = new InodeDexie(`inodes-${contractAddress}`);
     this.total = 0;
@@ -134,23 +135,7 @@ export class InodeDatabase {
         console.log(`oh no ${cid} died`);
       }
       localStorage.setItem(`inodes-index-${this.contractAddress}`, `${++this.numSynced}`);
-      
     }
-
-    // const numSynced = await this.db.inodes.count();
-    // for (let i = numSynced; i < TOTAL; i++) {
-    //   try {
-    //     const inode = await generateInode();
-    //     await this.db.inodes.add(inode);
-    //     cb(undefined, {
-    //       inode,
-    //       total: TOTAL,
-    //       numSynced: i + 1
-    //     });
-    //   } catch (err) {
-    //     cb(err as Error, undefined);
-    //   }
-    // }
   }
 
   async getSyncState(): Promise<SyncState> {
@@ -163,6 +148,7 @@ export class InodeDatabase {
   async clearData(): Promise<void> {
     await this.db.delete();
     this.db = new InodeDexie(`inodes-${this.contractAddress}`);
+    localStorage.removeItem(`inodes-index-${this.contractAddress}`);
   }
 
   async search(
@@ -170,7 +156,9 @@ export class InodeDatabase {
     limit: number = 10,
     offset: number = 0
   ): Promise<Pageable<Inode>> {
-    const inodes = this.db.inodes.filter(inode => inode.title.includes(query));
+    const inodes = this.db.inodes.filter(inode =>
+      inode.title.toLowerCase().includes(query.toLowerCase())
+    );
     const total = await inodes.count();
     const data = await inodes
       .offset(offset)

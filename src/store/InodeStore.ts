@@ -1,5 +1,5 @@
 import { RootStore } from "./rootStore";
-import { Inode, InodeDatabase, Pageable } from "../lib/db";
+import { Inode, InodeDatabase } from "../lib/db";
 import { action, computed, observable, autorun } from "mobx";
 
 interface SearchParams {
@@ -50,6 +50,8 @@ export class InodeStore {
     autoSync: boolean = false
   ) {
     this.db = new InodeDatabase(contractAddress);
+    // delete me
+    (window as any).db = this.db;
     this.resultsPerPage = resultsPerPage;
     this.rootStore = rootStore;
 
