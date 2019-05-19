@@ -79,7 +79,6 @@ export class InodeDatabase {
   private numSynced: number = 0;
   private total: number = 0;
   private ipfs: IPFS;
-  private startingIpfs: boolean = false;
 
   constructor(contractAddress: string, ipfs: IPFS) {
     this.contractAddress = contractAddress;
