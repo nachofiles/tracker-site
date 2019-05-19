@@ -15,7 +15,7 @@ const HomePage = (props: RouteComponentProps) => {
     }}>
       <div style={{ width: '100%', maxWidth: 800, padding: 20 }}>
         <div>
-          <TitleBar/>
+          <TitleBar onClick={() => props.history.push('/')}/>
         </div>
         <Input.Search
           size="large"

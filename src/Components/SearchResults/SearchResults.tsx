@@ -6,12 +6,17 @@ import { inject, observer } from 'mobx-react';
 import { RootStore } from '../../store/rootStore';
 import { ColumnProps } from 'antd/lib/table';
 import filesize from 'filesize';
+import { Link } from 'react-router-dom';
+import { Inode } from '../../lib/db';
 
-const columns: ColumnProps<any>[] = [
+const columns: ColumnProps<Inode>[] = [
   {
     title: 'Title',
     dataIndex: 'title',
-    key: 'title'
+    key: 'title',
+    render: (title: string, record) => {
+      return <Link to={`/file/${record.id}`}>{title}</Link>;
+    }
   },
   {
     title: 'Category',

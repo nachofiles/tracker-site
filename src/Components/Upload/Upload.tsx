@@ -4,11 +4,13 @@ import { Form, Input, Typography } from 'antd';
 interface UploadFormValue {
   title: string;
   description: string;
+  category: string;
 }
 
 const defaultValue: UploadFormValue = {
   title: '',
-  description: ''
+  description: '',
+  category: ''
 };
 
 const UploadForm = ({ value, onChange }: { value: UploadFormValue, onChange: (value: UploadFormValue) => void }) => {
@@ -16,11 +18,16 @@ const UploadForm = ({ value, onChange }: { value: UploadFormValue, onChange: (va
     <Form>
       <Form.Item label="Title">
         <Input value={value.title} onChange={e => onChange({ ...value, title: e.target.value })}
-                    placeholder="Title"/>
+               placeholder="Title"/>
       </Form.Item>
       <Form.Item label="Description">
         <Input.TextArea value={value.description} onChange={e => onChange({ ...value, title: e.target.value })}
                         placeholder="Description"/>
+      </Form.Item>
+
+      <Form.Item label="Category">
+        <Input value={value.category} onChange={e => onChange({ ...value, category: e.target.value })}
+               placeholder="Category"/>
       </Form.Item>
     </Form>
   );
