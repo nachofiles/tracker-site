@@ -2,10 +2,9 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Button, Icon, Input, Typography } from 'antd';
 import { Search } from 'history';
-import qs from 'qs';
 
 function parseSearch(search: Search): string {
-  return search.length > 1 ? qs.parse(search.substring(1)).q : '';
+  return new URLSearchParams(search).get('q') || '';
 }
 
 const TitleBar = (props: {}) => (
@@ -23,8 +22,10 @@ const TitleBar = (props: {}) => (
   </div>
 );
 
+const excludedRoutes = [ '/', '/upload' ];
+
 const AppHeader = ({ location, history }: RouteComponentProps) => {
-  if (location.pathname === '/') {
+  if (excludedRoutes.indexOf(location.pathname) !== -1) {
     return null;
   }
 
