@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router";
-import { Input, Popconfirm, Icon } from "antd";
+import { Input, Popconfirm, Icon, message } from "antd";
 import { TitleBar } from "../AppHeader/AppHeader";
 import { Link } from "react-router-dom";
 import { inject, observer } from 'mobx-react';
@@ -23,7 +23,9 @@ class HomePage extends React.Component<Props> {
     const { inode } = this.props.store;
 
     let syncText;
-    if (inode.totalInodesToSync === Infinity) {
+    if (inode.syncError) {
+      syncText = <span className="error">{inode.syncError.message}</span>;
+    } else if (inode.totalInodesToSync === Infinity) {
       syncText = '';
     } else if (inode.inodesSynced === inode.totalInodesToSync) {
       syncText = 'Fully synced!';
