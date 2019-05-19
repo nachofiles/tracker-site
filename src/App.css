@@ -30,21 +30,3 @@
 .container > footer {
   grid-area: footer;
 }
-
-.ant-table-row {
-  background-color: #ffff;
-}
-
-.ant-table-wrapper {
-  width: 75%;
-  background-color: #ffff;
-  font-family: PT Sans, sans-serif;
-  overflow: hidden;
-  border-radius: 1.5rem/2rem;
-  box-shadow: 8px 10px 16px rgba(0, 0, 0, 0.1);
-  transform: translateZ(0);
-}
-
-.ant-pagination {
-  padding-right: 3em;
-}
