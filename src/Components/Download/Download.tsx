@@ -37,13 +37,13 @@ export class Download extends React.Component<Props> {
         <div className="Download-content">
           <div className="Download-header">
             <div className="Download-title">
-              <Title level={2}>{downloadStore.filemetaData.title}</Title>
+              <Title level={3}>{downloadStore.filemetaData.title}</Title>
             </div>
             <div className="Download-title-specs">
               <div className="Download-header-created">
-                Created: {downloadStore.filemetaData.createdAt}
+                Uploaded at {new Date(downloadStore.filemetaData.createdAt).toLocaleString()}
                 <div className="Download-author">
-                  {downloadStore.filemetaData.author}
+                  By {downloadStore.filemetaData.author}
                 </div>
               </div>
             </div>

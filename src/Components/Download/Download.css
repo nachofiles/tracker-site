@@ -4,7 +4,7 @@
   margin: 2.5em;
   display: flex;
   justify-content: center;
-  height: 50vh;
+  min-height: 50vh;
 }
 
 .Download-content {
@@ -20,22 +20,21 @@
 
 .Download-header {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  text-align: center;
 }
 
 .Download-title-specs {
-  display: flex;
-  justify-content: space-between;
-}
-.Download-header-created {
-  text-align: right;
+  text-align: center;
+  opacity: 0.7;
 }
 /* . .Download-sub-header {
   display: flex;
 } */
 
 .Download-body {
-  padding: 3em;
+  padding: 1em 3em;
 }
 
 .Download-description {
@@ -43,15 +42,11 @@
 }
 
 .Download-footer {
-  padding-top: 4em;
-  position: relative;
-  bottom: -8em;
+  padding-top: 2em;
   display: flex;
   justify-content: center;
 }
 
 .Download-button {
-  position: relative;
-  bottom: -6em;
   padding-top: 1em;
 }
