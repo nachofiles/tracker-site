@@ -61,7 +61,7 @@ export class UploadForm extends React.Component<Props, State> {
   };
 
   private handleUpload = () => {
-    console.log("i was clicked");
+    this.props.store.inode.createInode(this.state.uploadFormValue);
   };
 
   upload = () => {

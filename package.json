@@ -14,7 +14,7 @@
     "dexie": "2.0.4",
     "ethers": "4.0.27",
     "filesize": "^4.1.2",
-    "ipfs": "^0.35.0",
+    "ipfs-http-client": "^31.1.0",
     "mobx": "^5.9.4",
     "mobx-react": "^5.4.4",
     "react": "^16.8.6",
