@@ -22,7 +22,7 @@ const HomePage = (props: RouteComponentProps) => {
             <Link to="/search?q=">Browse files</Link>
           </li>
           <li>
-            <Link to="/upload">Upload files</Link>
+            <Link to="/upload">Upload file</Link>
           </li>
         </ul>
       </div>
