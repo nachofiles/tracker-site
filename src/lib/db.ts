@@ -129,7 +129,7 @@ export class InodeDatabase {
         }
 
         const meta = FileMetadata.decode(metaFile as Uint8Array);
-        this.db.inodes.add({
+        await this.db.inodes.add({
           ...meta,
           id: cid,
           dataUri: meta.uri,

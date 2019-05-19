@@ -938,10 +938,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-9.0.1.tgz#c27b391d8457d1e893f1eddeaf5e5412d12ffbb5"
   integrity sha512-6It2EVfGskxZCQhuykrfnALg7oVeiI6KclWSmGDqB0AiInVrTGB9Jp9i4/Ad21u9Jde/voVQz6eFX/eSg/UsPA==
 
-"@ethny-tracker/tracker-contracts@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@ethny-tracker/tracker-contracts/-/tracker-contracts-1.0.3.tgz#17f1f8f09d5f4696d2abd7a6c6f472cc415d9631"
-  integrity sha512-tSxbDZlMdcemRyc5q3QE20bKYr77iHtXHcxbVymCeyvl2TcmyQaPtJy3fTxsSBZwbbmzP9SH5wrhlHb0Bq7F4Q==
+"@ethny-tracker/tracker-contracts@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@ethny-tracker/tracker-contracts/-/tracker-contracts-1.0.4.tgz#2fed376d3d54821f5da6d4ed74397da32ab3861c"
+  integrity sha512-tguaFfiKgJh8T8gbilrB6CG8trqycNeGIS6cCGzip/JTM1QgiiuJ2Cq8ik55t78jW5vbT+cQGfbKEMu1kBazXA==
 
 "@ethny-tracker/tracker-protos@1.0.3":
   version "1.0.3"
@@ -4015,11 +4015,6 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
   integrity sha1-6vQ5/U1ISK105cx9vvIAZyueNFs=
-
-dayjs@^1.8.14:
-  version "1.8.14"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.8.14.tgz#43e4f62830c2c3342c3fcd25934dc9162dbe6f38"
-  integrity sha512-AVhDmRTe541iWirnoeFSSDDGvCT6HWaNQ4z2WmmzXMGZj6ph6ydao2teKq/eUtR43GPJXlYFD+C/SotG1P9wUQ==
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
