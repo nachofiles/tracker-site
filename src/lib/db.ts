@@ -235,6 +235,15 @@ export class InodeDatabase {
     });
   }
 
+  public getFileMetadata(cid: string) {
+    return this.db.inodes.get(cid);
+  }
+
+  public getFile(cid: string) {
+    const data: Uint8Array = (this.ipfs as any).cat(cid);
+    return Buffer.from(data);
+  }
+
   // Assumes base58 ipfs hash
   async add(args: IFileMetadata) {
     const metadataBytes = FileMetadata.encode(args).finish();
