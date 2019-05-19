@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Table } from 'antd';
+import { Spin, Table } from 'antd';
 import './SearchResults.css';
 import { inject, observer } from 'mobx-react';
 import { RootStore } from '../../store/rootStore';
@@ -33,7 +33,19 @@ class EnsResolver extends React.Component<{ address: string, store?: RootStore }
 
     const { isLoading: { [ address ]: isLoading }, ensNames: { [ address ]: name } } = store!.ensStore;
 
-    return <span style={{ color: isLoading ? 'slategray' : void 0 }}>{name || address}</span>;
+    if (name) {
+      return (
+        <a href={`https://manager.ens.domains/name/${name}`} rel="nofollow noopener" target="_blank">
+          {name}
+        </a>
+      );
+    }
+
+    if (isLoading) {
+      return <Spin/>;
+    }
+
+    return <TruncatedText tooltip={address}>{address}</TruncatedText>;
   }
 }
 
@@ -70,9 +82,7 @@ const columns: ColumnProps<Inode>[] = [
     dataIndex: 'author',
     render: (author) => {
       return (
-        <TruncatedText tooltip={author}>
-          <EnsResolver address={author}/>
-        </TruncatedText>
+        <EnsResolver address={author}/>
       );
     }
   },

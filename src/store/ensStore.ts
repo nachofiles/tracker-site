@@ -30,7 +30,7 @@ export class EnsStore {
       this.ensNames = { ...this.ensNames, [ address ]: await this.promises[ address ] };
       this.isLoading = { ...this.isLoading, [ address ]: false };
     } catch (error) {
-      console.info('failed to ens name for lookup address', address);
+      console.error('failed to ens name for lookup address', address, error);
       // to try again, uncomment this line
       // delete this.promises[ address ];
       this.isLoading = { ...this.isLoading, [ address ]: false };
