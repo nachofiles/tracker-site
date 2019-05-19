@@ -1,8 +1,8 @@
-import Dexie from "dexie";
-import IPFS from "ipfs";
-import bs58 from "bs58";
-import { getTrackerContract, getSignerTrackerContract } from "./eth";
-import { FileMetadata } from "@ethny-tracker/tracker-protos";
+import Dexie from 'dexie';
+import IPFS from 'typestub-ipfs';
+import bs58 from 'bs58';
+import { getSignerTrackerContract, getTrackerContract } from './eth';
+import { FileMetadata, IFileMetadata } from '@ethny-tracker/tracker-protos';
 
 export interface Inode {
   id: string;
@@ -33,11 +33,11 @@ export type SyncUpdateCallback = (err?: Error, data?: SyncUpdate) => void;
 
 function getBytes32FromIpfsHash(ipfsListing: string) {
   return (
-    "0x" +
+    '0x' +
     bs58
       .decode(ipfsListing)
       .slice(2)
-      .toString("hex")
+      .toString('hex')
   );
 }
 
@@ -45,8 +45,8 @@ function getIpfsHashFromBytes32(bytes32Hex: string) {
   // Add our default ipfs values for first 2 bytes:
   // function:0x12=sha2, size:0x20=256 bits
   // and cut off leading "0x"
-  const hashHex = "1220" + bytes32Hex.slice(2);
-  const hashBytes = Buffer.from(hashHex, "hex");
+  const hashHex = '1220' + bytes32Hex.slice(2);
+  const hashBytes = Buffer.from(hashHex, 'hex');
   const hashStr = bs58.encode(hashBytes);
   return hashStr;
 }
@@ -62,18 +62,18 @@ class InodeDexie extends Dexie {
     super(name);
     this.version(1).stores({
       inodes: [
-        "id",
-        "title",
-        "description",
-        "category",
-        "mimeType",
-        "sizeBytes",
-        "author",
-        "dataUri",
-        "createdAt"
-      ].join(",")
+        'id',
+        'title',
+        'description',
+        'category',
+        'mimeType',
+        'sizeBytes',
+        'author',
+        'dataUri',
+        'createdAt'
+      ].join(',')
     });
-    this.inodes = this.table("inodes");
+    this.inodes = this.table('inodes');
   }
 }
 
@@ -91,7 +91,7 @@ export class InodeDatabase {
 
     this.db = new InodeDexie(`inodes-${contractAddress}`);
     this.numSynced = parseInt(
-      localStorage.getItem(`inodes-index-${contractAddress}`) || "0",
+      localStorage.getItem(`inodes-index-${contractAddress}`) || '0',
       10
     );
     this.ipfs = ipfs;
@@ -118,8 +118,9 @@ export class InodeDatabase {
         const metaFile = await Promise.race([
           (this.ipfs as any).cat(cid),
           sleep(10000)
-        ]).catch(() => {});
-        console.log("metafile:", metaFile);
+        ]).catch(() => {
+        });
+        console.log('metafile:', metaFile);
         if (!metaFile) {
           cb(new Error(`Error fetching metafile: ${cid}`), {
             numSynced: this.numSynced + 1,
@@ -134,7 +135,7 @@ export class InodeDatabase {
           dataUri: meta.uri,
           author: metaData.creator,
           createdAt: Date.now(),
-          mimeType: "application/zip",
+          mimeType: 'application/zip',
           sizeBytes: 0
         };
         this.db.inodes.add(inode);
@@ -184,7 +185,7 @@ export class InodeDatabase {
     limit: number = 10,
     offset: number = 0
   ): Promise<Pageable<Inode>> {
-    const inodes = this.db.inodes.orderBy("createdAt");
+    const inodes = this.db.inodes.orderBy('createdAt');
     const total = await inodes.count();
     const data = await inodes
       .offset(offset)
@@ -199,9 +200,16 @@ export class InodeDatabase {
   }
 
   // Assumes base58 ipfs hash
-  async add(b58hash: string) {
-    const hash = getBytes32FromIpfsHash(b58hash);
+  async add(args: IFileMetadata) {
+    const metadataBytes = FileMetadata.encode(args).finish();
+
+    const ipfsResults = (this.ipfs as any).add(metadataBytes);
+
+    const ipfsMultihash = ipfsResults[ 0 ].hash;
+
+    const bytes32Hash = getBytes32FromIpfsHash(ipfsMultihash);
+
     const contract = await getSignerTrackerContract(this.contractAddress);
-    contract.functions.addFile(hash);
+    await contract.functions.addFile(bytes32Hash);
   }
 }
