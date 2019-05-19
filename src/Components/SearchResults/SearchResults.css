@@ -1,25 +1,31 @@
 @import "~antd/dist/antd.css";
 
+.Search-results {
+    display: flex;
+    justify-content: center;
+}
+
 .Table-container {
-  display: flex;
-  justify-content: center;
-}
-.Table-content {
-  width: 90em;
-  text-align: left;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
 }
 
-.Table-header {
-  display: flex;
-  justify-content: flex-end;
+.ant-table-row {
+    background-color: #ffff;
 }
 
-.Search-button-group {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
+.ant-table-wrapper {
+    width: 100%;
+    background-color: #ffff;
+    font-family: PT Sans, sans-serif;
+    overflow: hidden;
+    border-radius: 1.5rem/2rem;
+    box-shadow: 8px 10px 16px rgba(0, 0, 0, 0.1);
+    transform: translateZ(0);
 }
 
-.Search-button-latest {
-  justify-content: flex-end;
+.ant-pagination {
+    padding-right: 3em;
 }
+
