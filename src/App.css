@@ -1,18 +1,36 @@
-@import "~antd/dist/antd.css";
+.container {
+    height: 100vh;
+    width: 100vw;
 
-.App {
-  text-align: center;
-  padding: 2em;
-  background-image: linear-gradient(to right, #ddd6f3, #faaca8);
-  height: 100vh;
+    display: grid;
+
+    grid-template-areas: "header header header" "main main main" "footer footer footer";
+
+    grid-template-columns: 200px 1fr 200px;
+    grid-template-rows: auto 1fr auto;
+    grid-gap: 10px;
 }
-.App-header {
-  text-align: left;
-  font-family: "Julius Sans One", sans-serif;
-  font-size: 42px;
-  display: flex;
-  justify-content: space-between;
+
+.container > header {
+    grid-area: header;
 }
+
+.container > nav {
+    grid-area: nav;
+}
+
+.container > main {
+    grid-area: main;
+}
+
+.container > aside {
+    grid-area: aside;
+}
+
+.container > footer {
+    grid-area: footer;
+}
+
 .ant-table-row {
-  background-color: #ffff;
+    background-color: #ffff;
 }
