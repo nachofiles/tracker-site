@@ -48,8 +48,7 @@ function getIpfsHashFromBytes32(bytes32Hex: string) {
   // and cut off leading "0x"
   const hashHex = "1220" + bytes32Hex.slice(2);
   const hashBytes = Buffer.from(hashHex, "hex");
-  const hashStr = bs58.encode(hashBytes);
-  return hashStr;
+  return bs58.encode(hashBytes);
 }
 
 function sleep(ms: number) {

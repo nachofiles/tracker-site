@@ -16,13 +16,14 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 5em;
+  margin-top: 4em;
 }
 
 .Upload-form {
   background-color: #ffff;
   padding: 4em;
-  width: 50%;
+  width: 100%;
+  max-width: 540px;
   font-family: PT Sans, sans-serif;
   overflow: hidden;
   border-radius: 1.5rem/2rem;
