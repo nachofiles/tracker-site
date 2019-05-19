@@ -239,16 +239,19 @@ export class InodeDatabase {
     return this.db.inodes.get(cid);
   }
 
-  public getFile(cid: string) {
-    const data: Uint8Array = (this.ipfs as any).cat(cid);
-    return Buffer.from(data);
+  public async getFile(cid: string) {
+    const data: Uint8Array = await (this.ipfs as any).cat(cid);
+    console.log(data);
+    return data;
   }
 
   // Assumes base58 ipfs hash
   async add(args: IFileMetadata) {
     const metadataBytes = FileMetadata.encode(args).finish();
 
-    const ipfsResults = await (this.ipfs as any).add(Buffer.from(metadataBytes));
+    const ipfsResults = await (this.ipfs as any).add(
+      Buffer.from(metadataBytes)
+    );
 
     const ipfsMultihash = ipfsResults[0].hash;
 

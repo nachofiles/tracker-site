@@ -4,6 +4,7 @@ import "./Download.css";
 import { RouteComponentProps } from "react-router";
 import { inject, observer } from "mobx-react";
 import { RootStore } from "../../store/rootStore";
+import download from "in-browser-download";
 
 const { Title } = Typography;
 
@@ -64,7 +65,23 @@ export class Download extends React.Component<Props> {
           </div>
           <div className="Download-button">
             {" "}
-            <Button type="primary" shape="round" icon="download" block>
+            <Button
+              type="primary"
+              shape="round"
+              icon="download"
+              block
+              onClick={async () => {
+                const buf = await downloadStore.getFile(
+                  downloadStore.filemetaData!.dataUri.replace("ipfs://", "")
+                );
+                download(
+                  buf.buffer,
+                  downloadStore.filemetaData!.title +
+                    "." +
+                    downloadStore.filemetaData!.mimeType.split("/")[1]
+                );
+              }}
+            >
               Download
             </Button>
           </div>
