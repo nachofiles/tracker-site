@@ -5,3 +5,18 @@
   align-items: center;
   justify-content: center;
 }
+
+
+ul.link-list {
+  list-style: none;
+  padding: 12px;
+}
+
+ul.link-list > li {
+  display: inline-block;
+}
+
+ul.link-list > li + li:before {
+  content: '|';
+  margin: 0 0.5em;
+}
