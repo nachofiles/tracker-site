@@ -44,10 +44,14 @@
 
 .Download-footer {
   padding-top: 4em;
+  position: relative;
+  bottom: -8em;
   display: flex;
   justify-content: center;
 }
 
 .Download-button {
+  position: relative;
+  bottom: -6em;
   padding-top: 1em;
 }
