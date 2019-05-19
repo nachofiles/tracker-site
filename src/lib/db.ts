@@ -154,7 +154,7 @@ export class InodeDatabase {
     if (shouldPoll) {
       console.log("polling for new changes...");
       window.setTimeout(() => {
-        this.startSync(cb);
+        this.startSync(cb, true);
       }, 250);
     }
   }
