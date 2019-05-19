@@ -17,7 +17,7 @@ const HomePage = (props: RouteComponentProps) => {
           placeholder="Search for a file..."
           onSearch={e => props.history.push(`/search?q=${e}`)}
         />
-        <ul style={{ padding: 12, listStyle: 'none' }}>
+        <ul className="link-list">
           <li>
             <Link to="/search?q=">Browse files</Link>
           </li>
