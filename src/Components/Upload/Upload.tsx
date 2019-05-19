@@ -3,6 +3,7 @@ import { Button, Form, Input, Alert, Upload, Icon, Select, message } from "antd"
 import { inject, observer } from "mobx-react";
 import Long from "long";
 import { IFileMetadata } from "@ethny-tracker/tracker-protos";
+import { RouteComponentProps } from "react-router";
 import { RootStore } from "../../store/rootStore";
 import "./Upload.css";
 
@@ -16,17 +17,17 @@ interface UploadFormValue {
 }
 
 const defaultValue: UploadFormValue = {
-  title: "",
-  description: "",
-  category: "",
+  title: '',
+  description: '',
+  category: '',
   sizeBytes: 0,
-  mimeType: "",
-  ipfsHash: ""
+  mimeType: '',
+  ipfsHash: ''
 };
 
 const Option = Select.Option;
 
-interface Props {
+interface Props extends RouteComponentProps {
   store: RootStore;
 }
 
@@ -35,7 +36,7 @@ interface State {
   isShowingHash: boolean;
 }
 
-@inject("store")
+@inject('store')
 @observer
 export class UploadForm extends React.Component<Props, State> {
   state = {
@@ -58,7 +59,7 @@ export class UploadForm extends React.Component<Props, State> {
         ...this.state.uploadFormValue,
         sizeBytes: this.props.store.upload.file.size,
         mimeType: this.props.store.upload.file.type,
-        ipfsHash: this.props.store.upload.fileHash,
+        ipfsHash: this.props.store.upload.fileHash
       });
     }
     return false;
@@ -71,7 +72,7 @@ export class UploadForm extends React.Component<Props, State> {
       category,
       ipfsHash,
       sizeBytes,
-      mimeType,
+      mimeType
     } = this.state.uploadFormValue;
 
     await this.props.store.upload.uploadFileMetadata({
@@ -80,11 +81,12 @@ export class UploadForm extends React.Component<Props, State> {
       category,
       mimeType,
       sizeBytes: Long.fromNumber(sizeBytes),
-      uri: "ipfs://" + ipfsHash,
+      uri: 'ipfs://' + ipfsHash
     } as IFileMetadata);
 
     if (!this.props.store.upload.uploadMetadataError) {
       message.success('Your file has been listed!');
+      this.props.history.push('/');
     }
   };
 
@@ -128,6 +130,7 @@ export class UploadForm extends React.Component<Props, State> {
                   optionFilterProp="children"
                   value={value.category}
                   onChange={category => this.handleChange({ ...value, category })}
+                  disabled={upload.isUploadingFileData}
                 >
                   <Option value="Document">Document</Option>
                   <Option value="Audio">Audio</Option>
@@ -159,10 +162,10 @@ export class UploadForm extends React.Component<Props, State> {
                       <Icon
                         type={
                           upload.isUploadingFileData
-                            ? "loading"
+                            ? 'loading'
                             : value.ipfsHash
-                            ? "check-circle"
-                            : "inbox"
+                            ? 'check-circle'
+                            : 'inbox'
                         }
                       />
                     </p>
@@ -189,8 +192,19 @@ export class UploadForm extends React.Component<Props, State> {
               block
               onClick={this.upload}
               disabled={disabled}
+              loading={upload.isUploadingMetadata}
             >
               Submit Your File
+            </Button>
+            <Button
+              style={{ marginTop: '1em' }}
+              size="large"
+              type="link"
+              onClick={() => this.props.history.push('/')}
+              shape="round"
+              block
+            >
+              Cancel
             </Button>
           </div>
         </div>
