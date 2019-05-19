@@ -48,6 +48,7 @@ const AppHeader = ({ location, history }: RouteComponentProps) => {
         <div>
           <Input.Search
             placeholder="Search for a file..."
+            size="large"
             defaultValue={parseSearch(location.search)}
             onSearch={e => history.push(`/search?q=${e}`)}
           />
