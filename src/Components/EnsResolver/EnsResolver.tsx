@@ -3,7 +3,7 @@ import { Spin } from 'antd';
 import { inject, observer } from 'mobx-react';
 import { RootStore } from '../../store/rootStore';
 
-const TruncatedText: React.FC<{ maxWidth?: number, tooltip?: string, children: any }> = ({ tooltip, children, maxWidth = 80 }) => (
+const TruncatedText: React.FC<{ maxWidth?: number, tooltip?: string, children: any }> = ({ tooltip, children, maxWidth = 120 }) => (
   <div style={{ textOverflow: 'ellipsis', maxWidth, overflowX: 'hidden' }} title={tooltip}>
     {children}
   </div>
@@ -39,7 +39,7 @@ class EnsResolver extends React.Component<{ address: string, store?: RootStore }
       return <Spin/>;
     }
 
-    return <TruncatedText tooltip={address}>{address}</TruncatedText>;
+    return <span>{address}</span>;
   }
 }
 

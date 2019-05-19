@@ -8,7 +8,7 @@ import { ColumnProps } from 'antd/lib/table';
 import filesize from 'filesize';
 import { Link } from 'react-router-dom';
 import { Inode } from '../../lib/db';
-import EnsResolver from '../EnsResolver/EnsResolver';
+import EnsResolver, { TruncatedText } from '../EnsResolver/EnsResolver';
 
 const columns: ColumnProps<Inode>[] = [
   {
@@ -43,7 +43,9 @@ const columns: ColumnProps<Inode>[] = [
     dataIndex: 'author',
     render: (author) => {
       return (
-        <EnsResolver address={author}/>
+        <TruncatedText tooltip={author} maxWidth={130}>
+          <EnsResolver address={author}/>
+        </TruncatedText>
       );
     }
   },
