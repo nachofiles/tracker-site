@@ -5,6 +5,7 @@ import { RouteComponentProps } from "react-router";
 import { inject, observer } from "mobx-react";
 import { RootStore } from "../../store/rootStore";
 import download from "in-browser-download";
+import filesize from 'filesize';
 
 const { Title } = Typography;
 
@@ -51,7 +52,7 @@ export class Download extends React.Component<Props> {
           <div className="Download-body">
             {" "}
             <div className="Download-description">
-              {downloadStore.filemetaData.description}
+              <code><pre>{downloadStore.filemetaData.description}</pre></code>
             </div>
             <div className="Download-footer">
               {" "}
@@ -59,7 +60,7 @@ export class Download extends React.Component<Props> {
               <Tag color="magenta">
                 {downloadStore.filemetaData.mimeType}
               </Tag>{" "}
-              <Tag color="green">{downloadStore.filemetaData.sizeBytes}</Tag>
+              <Tag color="green">{filesize(downloadStore.filemetaData.sizeBytes)}</Tag>
               <Tag color="purple"> ID: {downloadStore.filemetaData.id}</Tag>
             </div>
           </div>
