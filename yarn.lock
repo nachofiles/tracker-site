@@ -1340,6 +1340,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/blob-to-buffer@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@types/blob-to-buffer/-/blob-to-buffer-1.2.0.tgz#5b9774be46d91c58ff462e4a1d6b880fdcb4c9a3"
+  integrity sha512-H1pnvedEPyq/MNIdXbkQNNhBT+lvqAh7R5CrMtX6YTiSVfLxgj+o521WoPuyD/2EI6si7BlnQqgs+wZU2O9V3w==
+  dependencies:
+    "@types/node" "*"
+
 "@types/bs58@4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/bs58/-/bs58-4.0.0.tgz#baec75cb007b419ede3ec6b3410d2c8f14c92fc5"
@@ -2568,6 +2575,11 @@ blakejs@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/blakejs/-/blakejs-1.1.0.tgz#69df92ef953aa88ca51a32df6ab1c54a155fc7a5"
   integrity sha1-ad+S75U6qIylGjLfarHFShVfx6U=
+
+blob-to-buffer@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/blob-to-buffer/-/blob-to-buffer-1.2.8.tgz#78eeeb332f1280ed0ca6fb2b60693a8c6d36903a"
+  integrity sha512-re0AIxakF504MgeMtIyJkVcZ8T5aUxtp/QmTMlmjyb3P44E1BEv5x3LATBGApWAJATyXHtkXRD+gWTmeyYLiQA==
 
 blob@0.0.5, blob@~0.0.4:
   version "0.0.5"

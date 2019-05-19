@@ -44,11 +44,6 @@ export class InodeStore {
   @observable
   public totalInodesToSync: number = Infinity;
 
-  @observable
-  public creating: boolean = false;
-
-  public createError: Error | null = null;
-
   // internal
   private rootStore: RootStore;
   private db: InodeDatabase | undefined;
@@ -205,25 +200,5 @@ export class InodeStore {
     this.searchResults = [];
     this.totalInodesToSync = Infinity;
     this.inodesSynced = 0;
-  }
-
-  public async createInode(node: IFileMetadata): Promise<void> {
-    const db = await this.getDb();
-    runInAction(() => {
-      this.creating = true;
-      this.createError = null;
-    });
-
-    try {
-      await db.add(node);
-    } catch (error) {
-      runInAction(() => {
-        this.createError = error;
-      });
-    } finally {
-      runInAction(() => {
-        this.creating = false;
-      });
-    }
   }
 }

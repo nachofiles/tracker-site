@@ -32,19 +32,19 @@ const Option = Select.Option;
 
 interface Props {
   store: RootStore;
-};
+}
 
 interface State {
   uploadFormValue: UploadFormValue;
   isShowingHash: boolean;
-};
+}
 
 @inject("store")
 @observer
 export class UploadForm extends React.Component<Props, State> {
   state = {
     uploadFormValue: defaultValue,
-    isShowingHash: false,
+    isShowingHash: false
   };
 
   private handleChange = (uploadFormValue: UploadFormValue) => {
@@ -56,12 +56,12 @@ export class UploadForm extends React.Component<Props, State> {
   };
 
   private handleFileUpload = (file: File) => {
-    this.props.store.upload.uploadFile(file);
+    this.props.store.upload.uploadFileData(file);
     return false;
   };
 
   private handleUpload = () => {
-    this.props.store.inode.createInode(this.state.uploadFormValue);
+    this.props.store.upload.uploadFileMetadata(this.state.uploadFormValue);
   };
 
   upload = () => {
@@ -72,7 +72,7 @@ export class UploadForm extends React.Component<Props, State> {
       ipfsHash
     } = this.state.uploadFormValue;
 
-    this.props.store.inode.createInode({
+    this.props.store.upload.uploadFileMetadata({
       title,
       description,
       category,
@@ -81,8 +81,8 @@ export class UploadForm extends React.Component<Props, State> {
   };
 
   render() {
-    const { inode, upload } = this.props.store;
-    const { creating, createError } = inode;
+    const { upload } = this.props.store;
+    const { isUploadingMetadata, uploadMetadataError } = upload;
     const { uploadFormValue: value, isShowingHash } = this.state;
 
     return (
@@ -94,8 +94,10 @@ export class UploadForm extends React.Component<Props, State> {
               <Form.Item label="Title">
                 <Input
                   value={value.title}
-                  disabled={creating}
-                  onChange={e => this.handleChange({ ...value, title: e.target.value })}
+                  disabled={isUploadingMetadata}
+                  onChange={e =>
+                    this.handleChange({ ...value, title: e.target.value })
+                  }
                   placeholder="Title"
                   size="large"
                 />
@@ -103,8 +105,10 @@ export class UploadForm extends React.Component<Props, State> {
               <Form.Item label="Description">
                 <Input.TextArea
                   value={value.description}
-                  disabled={creating}
-                  onChange={e => this.handleChange({ ...value, description: e.target.value })}
+                  disabled={isUploadingMetadata}
+                  onChange={e =>
+                    this.handleChange({ ...value, description: e.target.value })
+                  }
                   placeholder="Description"
                 />
               </Form.Item>
@@ -125,9 +129,11 @@ export class UploadForm extends React.Component<Props, State> {
               {isShowingHash ? (
                 <Form.Item label="IPFS Hash">
                   <Input
-                    disabled={creating}
+                    disabled={isUploadingMetadata}
                     value={value.ipfsHash}
-                    onChange={e => this.handleChange({ ...value, ipfsHash: e.target.value })}
+                    onChange={e =>
+                      this.handleChange({ ...value, ipfsHash: e.target.value })
+                    }
                     placeholder="IPFS Hash"
                   />
                 </Form.Item>
@@ -136,17 +142,20 @@ export class UploadForm extends React.Component<Props, State> {
                   <Upload.Dragger
                     showUploadList={false}
                     beforeUpload={this.handleFileUpload}
-                    disabled={upload.isUploading}
+                    disabled={upload.isUploadingFileData}
                   >
                     <p className="ant-upload-drag-icon">
-                      <Icon type={
-                        upload.isUploading ? 'loading' :
-                          value.ipfsHash ? 'check-circle' : 'inbox'
-                      } />
+                      <Icon
+                        type={
+                          upload.isUploadingFileData
+                            ? "loading"
+                            : value.ipfsHash
+                            ? "check-circle"
+                            : "inbox"
+                        }
+                      />
                     </p>
-                    <p className="ant-upload-text">
-                      Upload a File
-                    </p>
+                    <p className="ant-upload-text">Upload a File</p>
                     <p className="ant-upload-hint">
                       File must be less than 50mb
                     </p>
@@ -154,11 +163,11 @@ export class UploadForm extends React.Component<Props, State> {
                 </Form.Item>
               )}
             </Form>
-            {createError && (
+            {uploadMetadataError && (
               <Alert
                 type="error"
                 message="Something went wrong"
-                description={createError.message}
+                description={uploadMetadataError.message}
               />
             )}
             <Button
