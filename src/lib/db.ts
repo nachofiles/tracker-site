@@ -265,4 +265,8 @@ export class InodeDatabase {
     const request = await contract.functions.addFile(bytes32Hash);
     await request.wait();
   }
+
+  public resolveAddress(address: string) {
+    return this.contract.provider.lookupAddress(address);
+  }
 }
