@@ -1,0 +1,30 @@
+.Upload-container {
+  padding: 20px;
+}
+
+.Upload-title {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  flex-grow: 1;
+  font: 'Julius Sans One", sans-serif';
+  font-size: 42px;
+}
+
+.Upload-form-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 5em;
+}
+.Upload-form {
+  background-color: #ffff;
+  padding: 4em;
+  width: 75%;
+  font-family: PT Sans, sans-serif;
+  overflow: hidden;
+  border-radius: 1.5rem/2rem;
+  box-shadow: 8px 10px 16px rgba(0, 0, 0, 0.1);
+  transform: translateZ(0);
+}
