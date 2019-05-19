@@ -155,7 +155,7 @@ export class InodeStore {
   public async getLatest(params: GetLatestParams) {
     const db = await this.getDb();
     const limit = this.resultsPerPage;
-    const offset = this.resultsPerPage * params.page;
+    const offset = this.resultsPerPage * (params.page - 1);
 
     runInAction(() => {
       this.loadingSearchResults = true;
