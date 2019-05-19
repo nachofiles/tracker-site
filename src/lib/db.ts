@@ -203,7 +203,7 @@ export class InodeDatabase {
   async add(args: IFileMetadata) {
     const metadataBytes = FileMetadata.encode(args).finish();
 
-    const ipfsResults = (this.ipfs as any).add(metadataBytes);
+    const ipfsResults = await (this.ipfs as any).add(metadataBytes);
 
     const ipfsMultihash = ipfsResults[ 0 ].hash;
 
