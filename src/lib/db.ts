@@ -1,5 +1,5 @@
 import Dexie from "dexie";
-import IPFS from "typestub-ipfs";
+import IPFS from "ipfs";
 import bs58 from "bs58";
 import { getTrackerContract, getSignerTrackerContract } from "./eth";
 import { FileMetadata } from "@ethny-tracker/tracker-protos";
@@ -27,9 +27,7 @@ export interface SyncState {
   total: number;
 }
 
-export type SyncUpdate = {
-  inode: Inode;
-} & SyncState;
+export type SyncUpdate = SyncState;
 
 export type SyncUpdateCallback = (err?: Error, data?: SyncUpdate) => void;
 
@@ -118,10 +116,15 @@ export class InodeDatabase {
       const cid = getIpfsHashFromBytes32(metaData.ipfsHash);
       try {
         const metaFile = await Promise.race([
-          this.ipfs.files.cat(cid),
-          sleep(1000)
-        ]);
+          (this.ipfs as any).cat(cid),
+          sleep(10000)
+        ]).catch(() => {});
+        console.log("metafile:", metaFile);
         if (!metaFile) {
+          cb(new Error(`Error fetching metafile: ${cid}`), {
+            numSynced: this.numSynced + 1,
+            total: this.total
+          });
           continue;
         }
         const meta = FileMetadata.decode(metaFile as Uint8Array);
@@ -136,12 +139,12 @@ export class InodeDatabase {
         };
         this.db.inodes.add(inode);
         cb(undefined, {
-          inode,
           numSynced: this.numSynced + 1,
           total: this.total
         });
       } catch (err) {
         console.log(`oh no ${cid} died`);
+        console.log(err);
       }
       localStorage.setItem(
         `inodes-index-${this.contractAddress}`,

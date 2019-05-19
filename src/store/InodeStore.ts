@@ -1,7 +1,7 @@
 import { RootStore } from "./rootStore";
 import { Inode, InodeDatabase } from "../lib/db";
-import { action, computed, observable, autorun } from "mobx";
-import IPFS from "typestub-ipfs";
+import { action, computed, observable, autorun, runInAction } from "mobx";
+import IPFS from "ipfs";
 
 interface SearchParams {
   query: string;
@@ -47,7 +47,7 @@ export class InodeStore {
   private rootStore: RootStore;
   private db: InodeDatabase | undefined;
   private contractAddress: string;
-
+  private ipfsNode = new IPFS();
   constructor(
     rootStore: RootStore,
     contractAddress: string,
@@ -68,9 +68,10 @@ export class InodeStore {
   private getDb(): Promise<InodeDatabase> {
     return new Promise(resolve => {
       if (!this.db) {
-        const ipfsNode = new IPFS();
-        ipfsNode.once("ready", () => {
-          this.db = new InodeDatabase(this.contractAddress, ipfsNode);
+        this.ipfsNode.once("ready", () => {
+          console.log("ipfs ready");
+          this.db = new InodeDatabase(this.contractAddress, this.ipfsNode);
+          console.log(this.ipfsNode.files);
           return resolve(this.db);
         });
       } else {
@@ -101,7 +102,6 @@ export class InodeStore {
       db.startSync((err, syncState) => {
         if (err) {
           console.warn("Error while syncing:", err);
-          return;
         }
         if (!syncState) {
           throw Error("Result must exist");
@@ -135,6 +135,9 @@ export class InodeStore {
     const limit = this.resultsPerPage;
     const offset = this.resultsPerPage * (params.page - 1);
 
+    runInAction(() => {
+      this.loadingSearchResults = true;
+    });
     const searchResults = await db.search(params.query, limit, offset);
 
     this.updateSearchResults({
@@ -151,6 +154,10 @@ export class InodeStore {
     const db = await this.getDb();
     const limit = this.resultsPerPage;
     const offset = this.resultsPerPage * params.page;
+
+    runInAction(() => {
+      this.loadingSearchResults = true;
+    });
 
     const searchResults = await db.latest(limit, offset);
 
