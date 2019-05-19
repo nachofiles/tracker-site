@@ -58,7 +58,7 @@ export class InodeDatabase {
   private contractAddress: string;
   private db: InodeDexie;
 
-  constructor(contractAddress: string) {
+  constructor(contractAddress: string, _: any) {
     this.contractAddress = contractAddress;
     this.db = new InodeDexie(`inodes-${contractAddress}`);
   }

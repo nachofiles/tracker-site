@@ -1,5 +1,5 @@
 import { RootStore } from "./rootStore";
-import { Inode, InodeDatabase } from "../lib/db";
+import { Inode, InodeDatabase } from "../lib/dbfake";
 import { action, computed, observable, autorun } from "mobx";
 import IPFS from "typestub-ipfs";
 
