@@ -42,6 +42,8 @@ export class InodeStore {
   public inodesSynced: number = 0;
   @observable
   public totalInodesToSync: number = Infinity;
+  @observable
+  public syncError: Error | null = null;
 
   // internal
   private rootStore: RootStore;
@@ -116,7 +118,10 @@ export class InodeStore {
       });
     };
 
-    initiator();
+    initiator().catch(err => {
+      console.error('Sync error!', err);
+      this.syncError = new Error('Incorrect network!');
+    });
   }
 
   private syncWatcher() {
