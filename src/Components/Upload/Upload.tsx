@@ -78,15 +78,19 @@ export class Upload extends React.Component<{ store: RootStore }, { uploadFormVa
   };
 
   render() {
+    const { creating, createError } = this.props.store.inode;
+    const { uploadFormValue } = this.state;
+
     return (
       <div style={{ padding: 20 }}>
         <Typography.Title level={2}>Upload a file</Typography.Title>
         <UploadForm
-          disabled={this.props.store.inode.creating}
-          value={this.state.uploadFormValue}
+          disabled={creating}
+          value={uploadFormValue}
           onChange={this.handleChange}/>
+        {createError !== null ? <div>{createError.message}</div> : null}
         <Button
-          loading={this.props.store.inode.creating}
+          loading={creating}
           onClick={this.upload}>Upload</Button>
       </div>
     );
