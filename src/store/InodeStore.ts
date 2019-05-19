@@ -1,8 +1,7 @@
-import { RootStore } from './rootStore';
-import { Inode, InodeDatabase } from '../lib/db';
-import { action, autorun, computed, observable, runInAction } from 'mobx';
-import { IFileMetadata } from '@ethny-tracker/tracker-protos';
-import IpfsClient from 'ipfs-http-client';
+import { RootStore } from "./rootStore";
+import { Inode, InodeDatabase } from "../lib/db";
+import { action, autorun, computed, observable, runInAction } from "mobx";
+import IpfsClient from "ipfs-http-client";
 
 interface SearchParams {
   query: string;
@@ -48,7 +47,11 @@ export class InodeStore {
   private rootStore: RootStore;
   private db: InodeDatabase | undefined;
   private contractAddress: string;
-  private ipfsClient = new IpfsClient('ec2-34-229-138-23.compute-1.amazonaws.com', '5001', { protocol: 'http' });
+  private ipfsClient = new IpfsClient(
+    "ec2-34-229-138-23.compute-1.amazonaws.com",
+    "5001",
+    { protocol: "http" }
+  );
 
   constructor(
     rootStore: RootStore,
@@ -82,7 +85,7 @@ export class InodeStore {
   @computed
   public get isDbSynced(): boolean {
     const isSynced = this.inodesSynced === this.totalInodesToSync;
-    console.log('isDbSynced:', isSynced);
+    console.log("isDbSynced:", isSynced);
     return isSynced;
   }
 
@@ -100,10 +103,10 @@ export class InodeStore {
 
       db.startSync((err, syncState) => {
         if (err) {
-          console.warn('Error while syncing:', err);
+          console.warn("Error while syncing:", err);
         }
         if (!syncState) {
-          throw Error('Result must exist');
+          throw Error("Result must exist");
         }
 
         this.updateSyncProgress({
@@ -119,7 +122,7 @@ export class InodeStore {
   private syncWatcher() {
     autorun(() => {
       if (!this.isDbSynced) {
-        console.log('Running store init');
+        console.log("Running store init");
         this.init();
       }
     });
@@ -160,7 +163,7 @@ export class InodeStore {
 
     const searchResults = await db.latest(limit, offset);
 
-    console.log('[getLatest]', searchResults);
+    console.log("[getLatest]", searchResults);
 
     this.updateSearchResults({
       total: searchResults.total,
@@ -177,25 +180,25 @@ export class InodeStore {
     this.clearResults();
   }
 
-  @action('updateSyncProgress')
+  @action("updateSyncProgress")
   private updateSyncProgress(params: UpdateSyncAction): void {
-    console.log('updateSyncProgress:', params);
+    console.log("updateSyncProgress:", params);
     this.inodesSynced = params.inodesSynced;
     this.totalInodesToSync = params.totalInodes;
   }
 
-  @action('updateSearchResults')
+  @action("updateSearchResults")
   private updateSearchResults(params: UpdateSearchResultsAction): void {
-    console.log('updateSearchResults:', params);
+    console.log("updateSearchResults:", params);
     this.searchResults = params.data;
     console.log(params.total);
     this.total = params.total;
     this.loadingSearchResults = false;
   }
 
-  @action('clearResults')
+  @action("clearResults")
   private clearResults() {
-    console.log('clearResults');
+    console.log("clearResults");
 
     this.searchResults = [];
     this.totalInodesToSync = Infinity;

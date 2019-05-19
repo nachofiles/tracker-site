@@ -1,11 +1,15 @@
-import { Typography, Button, Tag } from "antd";
+import { Typography, Button, Tag, Spin } from "antd";
 import React from "react";
 import "./Download.css";
 import { RouteComponentProps } from "react-router";
+import { inject, observer } from "mobx-react";
+import { RootStore } from "../../store/rootStore";
 
 const { Title } = Typography;
 
 interface Props extends RouteComponentProps<{ id: string }> {
+  store: RootStore;
+
   title: string;
   created: string;
   author: string;
@@ -17,35 +21,45 @@ interface Props extends RouteComponentProps<{ id: string }> {
   category: string;
 }
 
+@inject("store")
+@observer
 export class Download extends React.Component<Props> {
   componentDidMount() {
     const { id } = this.props.match.params;
+    this.props.store.download.getFileMetadata(id);
   }
 
   public render() {
-    return (
+    const downloadStore = this.props.store.download;
+    return downloadStore.filemetaData ? (
       <div className="Download-container">
         <div className="Download-content">
           <div className="Download-header">
             <div className="Download-title">
-              <Title level={2}>{this.props.title}</Title>
+              <Title level={2}>{downloadStore.filemetaData.title}</Title>
             </div>
             <div className="Download-title-specs">
               <div className="Download-header-created">
-                Created: {this.props.created}
-                <div className="Download-author">{this.props.author}</div>
+                Created: {downloadStore.filemetaData.createdAt}
+                <div className="Download-author">
+                  {downloadStore.filemetaData.author}
+                </div>
               </div>
             </div>
           </div>
           <div className="Download-body">
             {" "}
-            <div className="Download-description">{this.props.description}</div>
+            <div className="Download-description">
+              {downloadStore.filemetaData.description}
+            </div>
             <div className="Download-footer">
               {" "}
-              <Tag color="volcano">{this.props.category}</Tag>
-              <Tag color="magenta">{this.props.fileType}</Tag>{" "}
-              <Tag color="green">{this.props.fileSize}</Tag>
-              <Tag color="purple"> ID: {this.props.id}</Tag>
+              <Tag color="volcano">{downloadStore.filemetaData.category}</Tag>
+              <Tag color="magenta">
+                {downloadStore.filemetaData.mimeType}
+              </Tag>{" "}
+              <Tag color="green">{downloadStore.filemetaData.sizeBytes}</Tag>
+              <Tag color="purple"> ID: {downloadStore.filemetaData.id}</Tag>
             </div>
           </div>
           <div className="Download-button">
@@ -56,6 +70,8 @@ export class Download extends React.Component<Props> {
           </div>
         </div>
       </div>
+    ) : (
+      <Spin />
     );
   }
 }
