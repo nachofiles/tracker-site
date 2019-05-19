@@ -17,7 +17,7 @@ export class RootStore {
 
     this.inode = new InodeStore(
       this,
-      '0xF337f1C8f8f0850Cd8eca577730f725C6E6FA451',
+      '0x5868dC64C04348c3eEfF99c55ddDd2064Ff5F90d',
       10,
       true
     );
