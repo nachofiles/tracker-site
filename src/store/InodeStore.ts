@@ -30,6 +30,9 @@ export class InodeStore {
   public searchResults: Inode[] = [];
 
   @observable
+  public loadingSearchResults: boolean = false;
+
+  @observable
   public total: number = 0;
   // the number of results to show per page
   public resultsPerPage: number;
@@ -181,6 +184,7 @@ export class InodeStore {
     this.searchResults = params.data;
     console.log(params.total);
     this.total = params.total;
+    this.loadingSearchResults = false;
   }
 
   @action("clearResults")

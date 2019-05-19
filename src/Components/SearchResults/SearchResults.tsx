@@ -1,11 +1,12 @@
 import React from "react";
 import { RouteComponentProps } from "react-router";
-import { Table, Button } from "antd";
+import { Table, Button, Icon } from "antd";
 import "./SearchResults.css";
 import { inject, observer } from "mobx-react";
 import { RootStore } from "../../store/rootStore";
 import { ColumnProps } from "antd/lib/table";
 import filesize from "filesize";
+import { Link } from "react-router-dom";
 
 const columns: ColumnProps<any>[] = [
   {
@@ -92,11 +93,25 @@ export class SearchResults extends React.Component<Props, State> {
     return query;
   }
 
+  private getLatest = () => {
+    this.inodeStore.getLatest({ page: this.state.currPage });
+  };
+
   public render() {
     return (
       <div className="Table-container">
         <div className="Table-content">
-          Searching for {this.getQuery()}!
+          <div className="Search-button-group">
+            <Link to="/">
+              <Button ghost>
+                <Icon type="left" />
+                Go back
+              </Button>
+            </Link>
+            <Button ghost icon="download" onClick={this.getLatest}>
+              Get Latest
+            </Button>
+          </div>
           <Table
             columns={columns}
             dataSource={this.inodeStore.searchResults}
@@ -106,6 +121,7 @@ export class SearchResults extends React.Component<Props, State> {
               total: this.inodeStore.total,
               onChange: page => this.setState({ currPage: page })
             }}
+            loading={this.props.store.inode.loadingSearchResults}
             rowKey="id"
           />
         </div>
