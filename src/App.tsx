@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
-import { Download, SearchResults, Upload } from "./Components";
+import { Download, SearchResults, UploadForm } from "./Components";
 import "./App.css";
 import { RootStore } from "./store/rootStore";
 import { observer, Provider } from "mobx-react";
@@ -23,7 +23,7 @@ class App extends Component {
                 <Route path="/" component={HomePage} exact />
                 <Route path="/search" component={SearchResults} exact />
                 <Route path="/file/:id" component={Download} exact />
-                <Route path="/upload" component={Upload} exact />
+                <Route path="/upload" component={UploadForm} exact />
               </Switch>
             </main>
           </div>

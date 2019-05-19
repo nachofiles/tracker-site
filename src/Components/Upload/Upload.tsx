@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Alert, Upload, Icon, Select } from "antd";
 import { inject, observer } from "mobx-react";
 import { RootStore } from "../../store/rootStore";
 import "./Upload.css";
@@ -28,57 +28,36 @@ const defaultValue: UploadFormValue = {
   ipfsHash: ""
 };
 
-const UploadForm = ({
-  disabled,
-  value,
-  onChange
-}: {
-  disabled: boolean;
-  value: UploadFormValue;
-  onChange: (value: UploadFormValue) => void;
-}) => {
-  return (
-    <Form>
-      <Form.Item label="Title">
-        <Input
-          value={value.title}
-          disabled={disabled}
-          onChange={e => onChange({ ...value, title: e.target.value })}
-          placeholder="Title"
-        />
-      </Form.Item>
-      <Form.Item label="Description">
-        <Input.TextArea
-          value={value.description}
-          disabled={disabled}
-          onChange={e => onChange({ ...value, description: e.target.value })}
-          placeholder="Description"
-        />
-      </Form.Item>
-      <Form.Item label="IPFS hash">
-        <Input
-          disabled={disabled}
-          value={value.ipfsHash}
-          onChange={e => onChange({ ...value, ipfsHash: e.target.value })}
-          placeholder="IPFS Hash"
-        />
-      </Form.Item>
-    </Form>
-  );
+const Option = Select.Option;
+
+interface Props {
+  store: RootStore;
+};
+
+interface State {
+  uploadFormValue: UploadFormValue;
+  isShowingHash: boolean;
 };
 
 @inject("store")
 @observer
-export class Upload extends React.Component<
-  { store: RootStore },
-  { uploadFormValue: UploadFormValue }
-> {
+export class UploadForm extends React.Component<Props, State> {
   state = {
-    uploadFormValue: defaultValue
+    uploadFormValue: defaultValue,
+    isShowingHash: false,
   };
 
   private handleChange = (uploadFormValue: UploadFormValue) => {
     this.setState({ uploadFormValue });
+  };
+
+  private toggleFileHash = () => {
+    this.setState({ isShowingHash: !this.state.isShowingHash });
+  };
+
+  private handleFileUpload = (file: File) => {
+    this.props.store.upload.uploadFile(file);
+    return false;
   };
 
   private handleUpload = () => {
@@ -102,21 +81,88 @@ export class Upload extends React.Component<
   };
 
   render() {
-    const { creating, createError } = this.props.store.inode;
-    const { uploadFormValue } = this.state;
+    const { inode, upload } = this.props.store;
+    const { creating, createError } = inode;
+    const { uploadFormValue: value, isShowingHash } = this.state;
 
     return (
       <div className="Upload-container">
-        <div className="Upload-title"> Upload Your File</div>
+        <div className="Upload-title">Upload Your File</div>
         <div className="Upload-form-container">
           <div className="Upload-form">
-            <UploadForm
-              disabled={creating}
-              value={uploadFormValue}
-              onChange={this.handleChange}
-            />
-            {createError !== null ? <div>{createError.message}</div> : null}
+            <Form layout="vertical">
+              <Form.Item label="Title">
+                <Input
+                  value={value.title}
+                  disabled={creating}
+                  onChange={e => this.handleChange({ ...value, title: e.target.value })}
+                  placeholder="Title"
+                  size="large"
+                />
+              </Form.Item>
+              <Form.Item label="Description">
+                <Input.TextArea
+                  value={value.description}
+                  disabled={creating}
+                  onChange={e => this.handleChange({ ...value, description: e.target.value })}
+                  placeholder="Description"
+                />
+              </Form.Item>
+              <Form.Item label="Category">
+                <Select
+                  showSearch
+                  placeholder="Select a category"
+                  optionFilterProp="children"
+                >
+                  <Option value="Document">Document</Option>
+                  <Option value="Audio">Audio</Option>
+                  <Option value="Video">Video</Option>
+                  <Option value="Application">Application</Option>
+                  <Option value="Other">Other</Option>
+                </Select>
+              </Form.Item>
+
+              {isShowingHash ? (
+                <Form.Item label="IPFS Hash">
+                  <Input
+                    disabled={creating}
+                    value={value.ipfsHash}
+                    onChange={e => this.handleChange({ ...value, ipfsHash: e.target.value })}
+                    placeholder="IPFS Hash"
+                  />
+                </Form.Item>
+              ) : (
+                <Form.Item label="Upload a File">
+                  <Upload.Dragger
+                    showUploadList={false}
+                    beforeUpload={this.handleFileUpload}
+                    disabled={upload.isUploading}
+                  >
+                    <p className="ant-upload-drag-icon">
+                      <Icon type={
+                        upload.isUploading ? 'loading' :
+                          value.ipfsHash ? 'check-circle' : 'inbox'
+                      } />
+                    </p>
+                    <p className="ant-upload-text">
+                      Upload a File
+                    </p>
+                    <p className="ant-upload-hint">
+                      File must be less than 50mb
+                    </p>
+                  </Upload.Dragger>
+                </Form.Item>
+              )}
+            </Form>
+            {createError && (
+              <Alert
+                type="error"
+                message="Something went wrong"
+                description={createError.message}
+              />
+            )}
             <Button
+              size="large"
               type="primary"
               shape="round"
               icon="upload"
