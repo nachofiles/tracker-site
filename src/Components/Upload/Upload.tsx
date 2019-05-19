@@ -130,7 +130,7 @@ export class UploadForm extends React.Component<Props, State> {
                   optionFilterProp="children"
                   value={value.category}
                   onChange={category => this.handleChange({ ...value, category })}
-                  disabled={upload.isUploadingFileData}
+                  disabled={isUploadingMetadata}
                 >
                   <Option value="Document">Document</Option>
                   <Option value="Audio">Audio</Option>
@@ -157,7 +157,7 @@ export class UploadForm extends React.Component<Props, State> {
                     showUploadList={false}
                     beforeUpload={this.handleFileUpload}
                     customRequest={() => null}
-                    disabled={upload.isUploadingFileData}
+                    disabled={upload.isUploadingFileData || isUploadingMetadata}
                   >
                     <p className="ant-upload-drag-icon">
                       <Icon

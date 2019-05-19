@@ -122,7 +122,7 @@ export class InodeDatabase {
       try {
         const metaFile = await Promise.race([
           (this.ipfs as any).cat(cid),
-          sleep(2000)
+          sleep(1000)
         ]);
         if (!metaFile) {
           throw Error(`Error fetching metafile: ${cid}`);
