@@ -1,30 +1,26 @@
 import React from "react";
-import { Button, Form, Input, Alert, Upload, Icon, Select } from "antd";
+import { Button, Form, Input, Alert, Upload, Icon, Select, message } from "antd";
 import { inject, observer } from "mobx-react";
+import Long from "long";
+import { IFileMetadata } from "@ethny-tracker/tracker-protos";
 import { RootStore } from "../../store/rootStore";
 import "./Upload.css";
 
 interface UploadFormValue {
   title: string;
-  date: string;
-  author: string;
   description: string;
   category: string;
-  fileType: string;
-  fileSize: number;
-  id: string;
+  mimeType: string;
+  sizeBytes: number;
   ipfsHash: string;
 }
 
 const defaultValue: UploadFormValue = {
   title: "",
-  date: "",
-  author: "",
   description: "",
   category: "",
-  fileSize: 0,
-  fileType: "",
-  id: "",
+  sizeBytes: 0,
+  mimeType: "",
   ipfsHash: ""
 };
 
@@ -55,35 +51,48 @@ export class UploadForm extends React.Component<Props, State> {
     this.setState({ isShowingHash: !this.state.isShowingHash });
   };
 
-  private handleFileUpload = (file: File) => {
-    this.props.store.upload.uploadFileData(file);
+  private handleFileUpload = async (file: File) => {
+    await this.props.store.upload.uploadFileData(file);
+    if (this.props.store.upload.fileHash && this.props.store.upload.file) {
+      this.handleChange({
+        ...this.state.uploadFormValue,
+        sizeBytes: this.props.store.upload.file.size,
+        mimeType: this.props.store.upload.file.type,
+        ipfsHash: this.props.store.upload.fileHash,
+      });
+    }
     return false;
   };
 
-  private handleUpload = () => {
-    this.props.store.upload.uploadFileMetadata(this.state.uploadFormValue);
-  };
-
-  upload = () => {
+  private upload = async () => {
     const {
       title,
       description,
       category,
-      ipfsHash
+      ipfsHash,
+      sizeBytes,
+      mimeType,
     } = this.state.uploadFormValue;
 
-    this.props.store.upload.uploadFileMetadata({
+    await this.props.store.upload.uploadFileMetadata({
       title,
       description,
       category,
-      uri: "ipfs://" + ipfsHash
-    });
+      mimeType,
+      sizeBytes: Long.fromNumber(sizeBytes),
+      uri: "ipfs://" + ipfsHash,
+    } as IFileMetadata);
+
+    if (!this.props.store.upload.uploadMetadataError) {
+      message.success('Your file has been listed!');
+    }
   };
 
   render() {
     const { upload } = this.props.store;
     const { isUploadingMetadata, uploadMetadataError } = upload;
     const { uploadFormValue: value, isShowingHash } = this.state;
+    const disabled = !value.title || !value.description || !value.ipfsHash || !value.mimeType || !value.category;
 
     return (
       <div className="Upload-container">
@@ -117,6 +126,8 @@ export class UploadForm extends React.Component<Props, State> {
                   showSearch
                   placeholder="Select a category"
                   optionFilterProp="children"
+                  value={value.category}
+                  onChange={category => this.handleChange({ ...value, category })}
                 >
                   <Option value="Document">Document</Option>
                   <Option value="Audio">Audio</Option>
@@ -176,9 +187,10 @@ export class UploadForm extends React.Component<Props, State> {
               shape="round"
               icon="upload"
               block
-              onClick={this.handleUpload}
+              onClick={this.upload}
+              disabled={disabled}
             >
-              Upload Your File
+              Submit Your File
             </Button>
           </div>
         </div>

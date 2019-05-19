@@ -17,18 +17,24 @@ export class UploadStore {
   @observable
   public isUploadingFileData = false;
   @observable
+  public file: File | null = null;
+  @observable
   public fileHash = "";
 
   public async uploadFileData(file: File) {
     const db = await this.rootStore.inode.getDb();
+    this.fileHash = '';
+    this.file = null;
     this.isUploadingFileData = true;
     try {
       this.fileHash = await db.addFile(file);
+      this.file = file;
     } catch (e) {
       console.warn("Error uploading file:", e);
     }
 
     this.isUploadingFileData = false;
+    console.log('upload done', this);
   }
 
   public async uploadFileMetadata(node: IFileMetadata) {
@@ -43,5 +49,6 @@ export class UploadStore {
     }
 
     this.isUploadingMetadata = false;
+    console.log('upload done', this);
   }
 }
