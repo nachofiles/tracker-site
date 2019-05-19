@@ -34,7 +34,13 @@ export type SyncUpdate = {
 export type SyncUpdateCallback = (err?: Error, data?: SyncUpdate) => void;
 
 function getBytes32FromIpfsHash(ipfsListing: string) {
-  return "0x"+bs58.decode(ipfsListing).slice(2).toString('hex')
+  return (
+    "0x" +
+    bs58
+      .decode(ipfsListing)
+      .slice(2)
+      .toString("hex")
+  );
 }
 
 function getIpfsHashFromBytes32(bytes32Hex: string) {
@@ -42,7 +48,7 @@ function getIpfsHashFromBytes32(bytes32Hex: string) {
   // function:0x12=sha2, size:0x20=256 bits
   // and cut off leading "0x"
   const hashHex = "1220" + bytes32Hex.slice(2);
-  const hashBytes = Buffer.from(hashHex, 'hex');
+  const hashBytes = Buffer.from(hashHex, "hex");
   const hashStr = bs58.encode(hashBytes);
   return hashStr;
 }
@@ -79,25 +85,41 @@ export class InodeDatabase {
   private numSynced: number = 0;
   private total: number = 0;
   private ipfs: IPFS;
+  private contract: ReturnType<typeof getTrackerContract>;
 
   constructor(contractAddress: string, ipfs: IPFS) {
     this.contractAddress = contractAddress;
+    this.contract = getTrackerContract(this.contractAddress);
+
     this.db = new InodeDexie(`inodes-${contractAddress}`);
-    this.numSynced = parseInt(localStorage.getItem(`inodes-index-${contractAddress}`) || '0', 10);
-    this.ipfs = ipfs
+    this.numSynced = parseInt(
+      localStorage.getItem(`inodes-index-${contractAddress}`) || "0",
+      10
+    );
+    this.ipfs = ipfs;
+  }
+
+  async getSyncState(): Promise<SyncState> {
+    const total = await this.contract.functions.numFileMetadata();
+    this.total = total.toNumber();
+
+    return {
+      numSynced: this.numSynced,
+      total: this.total
+    };
   }
 
   async startSync(cb: SyncUpdateCallback) {
-    const contract = getTrackerContract(this.contractAddress);
-    const total = await contract.functions.numFileMetadata();
+    const total = await this.contract.functions.numFileMetadata();
     this.total = total.toNumber();
+
     for (let i = this.numSynced; i < this.total; i++) {
-      const metaData = await contract.functions.allFileMetadata(i);
+      const metaData = await this.contract.functions.allFileMetadata(i);
       const cid = getIpfsHashFromBytes32(metaData.ipfsHash);
       try {
         const metaFile = await Promise.race([
           this.ipfs.files.cat(cid),
-          sleep(1000),
+          sleep(1000)
         ]);
         if (!metaFile) {
           continue;
@@ -109,27 +131,23 @@ export class InodeDatabase {
           dataUri: meta.uri,
           author: metaData.creator,
           createdAt: Date.now(),
-          mimeType: 'application/zip',
-          sizeBytes: 0,
+          mimeType: "application/zip",
+          sizeBytes: 0
         };
         this.db.inodes.add(inode);
         cb(undefined, {
           inode,
           numSynced: this.numSynced + 1,
-          total: this.total,
+          total: this.total
         });
-      } catch(err) {
+      } catch (err) {
         console.log(`oh no ${cid} died`);
       }
-      localStorage.setItem(`inodes-index-${this.contractAddress}`, `${++this.numSynced}`);
+      localStorage.setItem(
+        `inodes-index-${this.contractAddress}`,
+        `${++this.numSynced}`
+      );
     }
-  }
-
-  async getSyncState(): Promise<SyncState> {
-    return {
-      numSynced: this.numSynced,
-      total: this.total,
-    };
   }
 
   async clearData(): Promise<void> {
@@ -173,7 +191,7 @@ export class InodeDatabase {
     return {
       data,
       total,
-      end,
+      end
     };
   }
 
