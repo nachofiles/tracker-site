@@ -9,11 +9,33 @@ import filesize from 'filesize';
 import { Link } from 'react-router-dom';
 import { Inode } from '../../lib/db';
 
-const TruncatedText: React.FC<{ author: string, maxWidth?: number }> = ({ author, maxWidth = 80 }) => (
-  <div style={{ textOverflow: 'ellipsis', maxWidth, overflowX: 'hidden' }} title={author}>
-    {author}
+const TruncatedText: React.FC<{ maxWidth?: number, tooltip?: string, children: any }> = ({ tooltip, children, maxWidth = 80 }) => (
+  <div style={{ textOverflow: 'ellipsis', maxWidth, overflowX: 'hidden' }} title={tooltip}>
+    {children}
   </div>
 );
+
+@inject('store')
+@observer
+class EnsResolver extends React.Component<{ address: string, store?: RootStore }> {
+  componentDidUpdate(prevProps: Readonly<{ address: string; store: RootStore }>) {
+    if (prevProps.address !== this.props.address) {
+      this.props.store!.ensStore.resolveName(this.props.address);
+    }
+  }
+
+  componentDidMount(): void {
+    this.props.store!.ensStore.resolveName(this.props.address);
+  }
+
+  render() {
+    const { address, store } = this.props;
+
+    const { isLoading: { [ address ]: isLoading }, ensNames: { [ address ]: name } } = store!.ensStore;
+
+    return <span style={{ color: isLoading ? 'slategray' : void 0 }}>{name || address}</span>;
+  }
+}
 
 const columns: ColumnProps<Inode>[] = [
   {
@@ -47,7 +69,11 @@ const columns: ColumnProps<Inode>[] = [
     key: 'author',
     dataIndex: 'author',
     render: (author) => {
-      return <TruncatedText author={author}/>;
+      return (
+        <TruncatedText tooltip={author}>
+          <EnsResolver address={author}/>
+        </TruncatedText>
+      );
     }
   }
 ];
