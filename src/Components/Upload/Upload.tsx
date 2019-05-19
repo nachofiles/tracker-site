@@ -3,6 +3,7 @@ import { Button, Form, Input } from "antd";
 import { inject, observer } from "mobx-react";
 import { RootStore } from "../../store/rootStore";
 import "./Upload.css";
+import { Select } from "antd";
 
 interface UploadFormValue {
   title: string;
@@ -27,6 +28,8 @@ const defaultValue: UploadFormValue = {
   id: "",
   ipfsHash: ""
 };
+
+const Option = Select.Option;
 
 const UploadForm = ({
   disabled,
@@ -55,6 +58,21 @@ const UploadForm = ({
           placeholder="Description"
         />
       </Form.Item>
+      <Form.Item label="Category">
+        <Select
+          showSearch
+          style={{ width: 800 }}
+          placeholder="Select a category"
+          optionFilterProp="children"
+        >
+          <Option value="science">Science</Option>
+          <Option value="Technology">Technology</Option>
+          <Option value="music">Application</Option>
+          <Option value="education">Education</Option>
+          <Option value="entertainment">Entertainment</Option>
+        </Select>
+      </Form.Item>
+
       <Form.Item label="IPFS hash">
         <Input
           disabled={disabled}
