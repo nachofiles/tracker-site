@@ -210,17 +210,23 @@ export class InodeStore {
     this.inodesSynced = 0;
   }
 
-  async createInode(node: IFileMetadata): Promise<void> {
+  public async createInode(node: IFileMetadata): Promise<void> {
     const db = await this.getDb();
-    this.creating = true;
-    this.createError = null;
+    runInAction(() => {
+      this.creating = true;
+      this.createError = null;
+    });
 
     try {
       await db.add(node);
     } catch (error) {
-      this.createError = error;
+      runInAction(() => {
+        this.createError = error;
+      });
     } finally {
-      this.creating = false;
+      runInAction(() => {
+        this.creating = false;
+      });
     }
   }
 }

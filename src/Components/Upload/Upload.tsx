@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Form, Input, Typography } from 'antd';
 import { inject, observer } from 'mobx-react';
-import { InodeStore } from '../../store/InodeStore';
+import { RootStore } from '../../store/rootStore';
 
 interface UploadFormValue {
   title: string;
@@ -57,7 +57,7 @@ const UploadForm = ({ disabled, value, onChange }: { disabled: boolean, value: U
 
 @inject('store')
 @observer
-export class Upload extends React.Component<{ store: InodeStore }, { uploadFormValue: UploadFormValue }> {
+export class Upload extends React.Component<{ store: RootStore }, { uploadFormValue: UploadFormValue }> {
   state = {
     uploadFormValue: defaultValue
   };
@@ -69,7 +69,7 @@ export class Upload extends React.Component<{ store: InodeStore }, { uploadFormV
   upload = () => {
     const { title, description, category, ipfsHash } = this.state.uploadFormValue;
 
-    this.props.store.createInode({
+    this.props.store.inode.createInode({
       title,
       description,
       category,
@@ -82,11 +82,11 @@ export class Upload extends React.Component<{ store: InodeStore }, { uploadFormV
       <div style={{ padding: 20 }}>
         <Typography.Title level={2}>Upload a file</Typography.Title>
         <UploadForm
-          disabled={this.props.store.creating}
+          disabled={this.props.store.inode.creating}
           value={this.state.uploadFormValue}
           onChange={this.handleChange}/>
         <Button
-          loading={this.props.store.creating}
+          loading={this.props.store.inode.creating}
           onClick={this.upload}>Upload</Button>
       </div>
     );
