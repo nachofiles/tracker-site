@@ -13,6 +13,7 @@ const HomePage = (props: RouteComponentProps) => {
           <TitleBar onClick={() => props.history.push("/")} />
         </div>
         <Input.Search
+          className="HomePage-search"
           size="large"
           placeholder="Search for a file..."
           onSearch={e => props.history.push(`/search?q=${e}`)}

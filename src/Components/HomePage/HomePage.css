@@ -6,17 +6,40 @@
   justify-content: center;
 }
 
+.HomePage-search .ant-input {
+  height: 60px;
+  padding: 10px 24px;
+  font-size: 20px;
+  border-radius: 30px;
+}
+
+.HomePage-search .ant-input-suffix {
+  right: 26px;
+  font-size: 26px;
+}
+
 
 ul.link-list {
   list-style: none;
   padding: 12px;
+  color: #FFF;
 }
 
 ul.link-list > li {
   display: inline-block;
 }
 
+ul.link-list > li > a {
+  color: #FFF;
+  opacity: 0.8;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.03);
+}
+ul.link-list > li > a:hover {
+  opacity: 1;
+}
+
 ul.link-list > li + li:before {
   content: '|';
   margin: 0 0.5em;
+  opacity: 0.5;
 }
