@@ -18,10 +18,28 @@
   font-size: 26px;
 }
 
+.HomePage-details {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  font-size: 12px;
+  color: #FFF;
+}
+
+.HomePage-sync {
+  opacity: 0.8;
+  transform: translateY(0);
+  transition: all 500ms ease;
+}
+.HomePage-sync.is-hidden {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
 
 ul.link-list {
+  padding: 0;
   list-style: none;
-  padding: 12px;
   color: #FFF;
 }
 
