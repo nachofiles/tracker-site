@@ -1,9 +1,0 @@
-@import "~antd/dist/antd.css";
-
-.Search-content {
-  height: 80vh;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  align-items: center;
-}

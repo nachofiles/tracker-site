@@ -47,7 +47,7 @@ interface State {
   currPage: number;
 }
 
-@inject("store")
+@inject('store')
 @observer
 export class SearchResults extends React.Component<Props, State> {
   public state: State = {
@@ -60,7 +60,7 @@ export class SearchResults extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const prevQueryParams = new URLSearchParams(prevProps.location.search);
-    const prevQuery = prevQueryParams.get("query");
+    const prevQuery = prevQueryParams.get('query');
 
     if (
       this.getQuery() === prevQuery &&
@@ -89,7 +89,7 @@ export class SearchResults extends React.Component<Props, State> {
 
   private getQuery() {
     const queryParams = new URLSearchParams(this.props.location.search);
-    const query = queryParams.get("query");
+    const query = queryParams.get('query');
     return query;
   }
 
