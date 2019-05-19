@@ -154,6 +154,16 @@ export class InodeDatabase {
     }
   }
 
+  // TODO: handle the data
+  listen() {
+    this.contract.addListener(
+      this.contract.filters.FileMetadataAdded(null, null, null, null),
+      (data) => {
+        console.log('contract listening filter', data);
+      }
+    );
+  }
+
   async clearData(): Promise<void> {
     await this.db.delete();
     this.db = new InodeDexie(`inodes-${this.contractAddress}`);
