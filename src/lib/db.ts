@@ -81,27 +81,17 @@ export class InodeDatabase {
   private ipfs: IPFS;
   private startingIpfs: boolean = false;
 
-  constructor(contractAddress: string) {
+  constructor(contractAddress: string, ipfs: IPFS) {
     this.contractAddress = contractAddress;
     this.db = new InodeDexie(`inodes-${contractAddress}`);
     this.numSynced = parseInt(localStorage.getItem(`inodes-index-${contractAddress}`) || '0', 10);
-    this.ipfs = new IPFS({ start: false });
-  }
-
-  async startIPFS() {
-    return new Promise(resolve => {
-      this.ipfs.start(() => {
-        resolve();
-      });
-    });
+    this.ipfs = ipfs
   }
 
   async startSync(cb: SyncUpdateCallback) {
     const contract = getTrackerContract(this.contractAddress);
     const total = await contract.functions.numFileMetadata();
     this.total = total.toNumber();
-
-    await this.startIPFS();
     for (let i = this.numSynced; i < this.total; i++) {
       const metaData = await contract.functions.allFileMetadata(i);
       const cid = getIpfsHashFromBytes32(metaData.ipfsHash);

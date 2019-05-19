@@ -1,6 +1,7 @@
 import { RootStore } from "./rootStore";
 import { Inode, InodeDatabase } from "../lib/db";
 import { action, computed, observable, autorun } from "mobx";
+import IPFS from "typestub-ipfs";
 
 interface SearchParams {
   query: string;
@@ -41,7 +42,8 @@ export class InodeStore {
 
   // internal
   private rootStore: RootStore;
-  private db: InodeDatabase;
+  private db: InodeDatabase | undefined;
+  private contractAddress: string;
 
   constructor(
     rootStore: RootStore,
@@ -49,15 +51,29 @@ export class InodeStore {
     resultsPerPage: number,
     autoSync: boolean = false
   ) {
-    this.db = new InodeDatabase(contractAddress);
     // delete me
     (window as any).db = this.db;
     this.resultsPerPage = resultsPerPage;
     this.rootStore = rootStore;
+    this.contractAddress = contractAddress;
 
     if (autoSync) {
       this.syncWatcher();
     }
+  }
+
+  private getDb(): Promise<InodeDatabase> {
+    return new Promise(resolve => {
+      if (!this.db) {
+        const ipfsNode = new IPFS();
+        ipfsNode.once("ready", () => {
+          this.db = new InodeDatabase(this.contractAddress, ipfsNode);
+          return resolve(this.db);
+        });
+      } else {
+        return resolve(this.db);
+      }
+    });
   }
 
   @computed
@@ -72,13 +88,14 @@ export class InodeStore {
    */
   public init(): void {
     const initiator = async () => {
-      const syncState = await this.db.getSyncState();
+      const db = await this.getDb();
+      const syncState = await db.getSyncState();
       this.updateSyncProgress({
         inodesSynced: syncState.numSynced,
         totalInodes: syncState.total
       });
 
-      this.db.startSync((err, syncState) => {
+      db.startSync((err, syncState) => {
         if (err) {
           console.warn("Error while syncing:", err);
           return;
@@ -111,10 +128,11 @@ export class InodeStore {
    * @param params Search parameters
    */
   public async search(params: SearchParams): Promise<void> {
+    const db = await this.getDb();
     const limit = this.resultsPerPage;
     const offset = this.resultsPerPage * (params.page - 1);
 
-    const searchResults = await this.db.search(params.query, limit, offset);
+    const searchResults = await db.search(params.query, limit, offset);
 
     this.updateSearchResults({
       total: searchResults.total,
@@ -127,10 +145,11 @@ export class InodeStore {
    * @param params Pagination parameters
    */
   public async getLatest(params: GetLatestParams) {
+    const db = await this.getDb();
     const limit = this.resultsPerPage;
     const offset = this.resultsPerPage * params.page;
 
-    const searchResults = await this.db.latest(limit, offset);
+    const searchResults = await db.latest(limit, offset);
 
     console.log("[getLatest]", searchResults);
 
@@ -144,7 +163,8 @@ export class InodeStore {
    * Clear the internal db and current results
    */
   public async clear() {
-    await this.db.clearData();
+    const db = await this.getDb();
+    await db.clearData();
     this.clearResults();
   }
 
