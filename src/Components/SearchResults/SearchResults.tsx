@@ -8,6 +8,7 @@ import { ColumnProps } from 'antd/lib/table';
 import filesize from 'filesize';
 import { Link } from 'react-router-dom';
 import { Inode } from '../../lib/db';
+import dayjs from 'dayjs';
 
 const TruncatedText: React.FC<{ maxWidth?: number, tooltip?: string, children: any }> = ({ tooltip, children, maxWidth = 80 }) => (
   <div style={{ textOverflow: 'ellipsis', maxWidth, overflowX: 'hidden' }} title={tooltip}>
@@ -73,6 +74,16 @@ const columns: ColumnProps<Inode>[] = [
         <TruncatedText tooltip={author}>
           <EnsResolver address={author}/>
         </TruncatedText>
+      );
+    }
+  },
+  {
+    title: 'Created at',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
+    render: (createdAt) => {
+      return (
+        <span>{dayjs(createdAt).format('YYYY-MM-DD HH:MMa')}</span>
       );
     }
   }
