@@ -1,11 +1,11 @@
-import React from "react";
-import { Button, Form, Input, Alert, Upload, Icon, Select, message } from "antd";
-import { inject, observer } from "mobx-react";
-import Long from "long";
-import { IFileMetadata } from "@ethny-tracker/tracker-protos";
-import { RouteComponentProps } from "react-router";
-import { RootStore } from "../../store/rootStore";
-import "./Upload.css";
+import React from 'react';
+import { Alert, Button, Form, Icon, Input, message, Select, Upload } from 'antd';
+import { inject, observer } from 'mobx-react';
+import Long from 'long';
+import { IFileMetadata } from '@ethny-tracker/tracker-protos';
+import { RouteComponentProps } from 'react-router';
+import { RootStore } from '../../store/rootStore';
+import './Upload.css';
 
 interface UploadFormValue {
   title: string;
@@ -156,6 +156,7 @@ export class UploadForm extends React.Component<Props, State> {
                   <Upload.Dragger
                     showUploadList={false}
                     beforeUpload={this.handleFileUpload}
+                    customRequest={() => null}
                     disabled={upload.isUploadingFileData}
                   >
                     <p className="ant-upload-drag-icon">
