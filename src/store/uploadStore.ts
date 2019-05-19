@@ -18,14 +18,16 @@ export class UploadStore {
   @observable
   public fileLastModified = 0;
 
-  public async uploadFile(file: File) {
-    const db = await this.rootStore.inode.getDb();
-    this.isUploading = true;
+  public preuploadFile(file: File) {
     this.fileName = file.name;
     this.fileSize = file.size;
     this.fileType = file.type;
     this.fileLastModified = file.lastModified;
+  }
 
+  public async uploadFile(file: File) {
+    const db = await this.rootStore.inode.getDb();
+    this.isUploading = true;
     try {
       await db.addFile(file);
     } catch (e) {
