@@ -115,12 +115,12 @@ export class InodeStore {
           inodesSynced: syncState.numSynced,
           totalInodes: syncState.total
         });
-      });
+      }, true);
     };
 
     initiator().catch(err => {
-      console.error('Sync error!', err);
-      this.syncError = new Error('Incorrect network!');
+      console.error("Sync error!", err);
+      this.syncError = new Error("Incorrect network!");
     });
   }
 
