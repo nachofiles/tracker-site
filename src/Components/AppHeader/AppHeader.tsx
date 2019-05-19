@@ -2,6 +2,7 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Button, Icon, Input } from 'antd';
 import { Search } from 'history';
+import { ReactComponent as NachoLogo } from '../../svg/nacho.svg';
 import './AppHeader.css';
 
 function parseSearch(search: Search): string {
@@ -13,8 +14,11 @@ interface TitleBarProps {
 }
 
 const TitleBar: React.FC<TitleBarProps> = props => (
-  <div style={{ display: 'flex', padding: 12 }}>
-    <div className="AppHeader-title" onClick={props.onClick}>ETHNYC TRACKER</div>
+  <div style={{ display: 'flex', padding: 12, alignItems: 'center' }}>
+    <div className="AppHeader-title" onClick={props.onClick}>
+      <NachoLogo className="AppHeader-title-logo" />
+      NachoFiles
+    </div>
 
     <div style={{ flexShrink: 0 }}>
       <a
@@ -23,7 +27,7 @@ const TitleBar: React.FC<TitleBarProps> = props => (
         target="_blank"
       >
         <Button size="large" type="link" ghost>
-          <Icon type="github" style={{ fontSize: '50px' }}/>
+          <Icon type="github" style={{ fontSize: '43px' }}/>
         </Button>
       </a>
     </div>
