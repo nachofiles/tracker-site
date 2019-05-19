@@ -3,6 +3,7 @@ import IPFS from "typestub-ipfs";
 import bs58 from "bs58";
 import { getSignerTrackerContract, getTrackerContract } from "./eth";
 import { FileMetadata, IFileMetadata } from "@ethny-tracker/tracker-protos";
+import blobToBuffer from "blob-to-buffer";
 
 export interface Inode {
   id: string;
@@ -218,11 +219,20 @@ export class InodeDatabase {
   }
 
   async addFile(file: File) {
-    const [addDataRes] = await (this.ipfs as any).add(file);
+    const buf = await this.toBufferAsync(file);
+    const [addDataRes] = await (this.ipfs as any).add(buf);
+    return addDataRes.hash;
+  }
 
-    await this.add({
-      title: file.name,
-      uri: `ipfs://${addDataRes.hash}`
+  private toBufferAsync(blob: Blob): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      blobToBuffer(blob, (err, buf) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(buf);
+        }
+      });
     });
   }
 
