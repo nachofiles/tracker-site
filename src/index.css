@@ -5,6 +5,7 @@ body {
     padding: 0;
 
     background-image: linear-gradient(70deg, #ddd6f3, #faaca8);
+    background-attachment: fixed;
 
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
