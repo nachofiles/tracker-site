@@ -1,4 +1,8 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<img src="https://i.imgur.com/q6a1yuM.png" width="200" />
+
+Store your files fo'eva on IPFS, in an indexed and browsable ways. Uncensorable and unstoppable, since the data is stored in an Ethereum smart contract!
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and made for the [ETH New York hackathon](http://ethnewyork.com).
 
 ## Available Scripts
 
