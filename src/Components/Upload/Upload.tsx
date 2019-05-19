@@ -3,6 +3,7 @@ import { Button, Form, Input, Alert, Upload, Icon, Select, message } from "antd"
 import { inject, observer } from "mobx-react";
 import Long from "long";
 import { IFileMetadata } from "@ethny-tracker/tracker-protos";
+import { RouteComponentProps } from "react-router";
 import { RootStore } from "../../store/rootStore";
 import "./Upload.css";
 
@@ -26,7 +27,7 @@ const defaultValue: UploadFormValue = {
 
 const Option = Select.Option;
 
-interface Props {
+interface Props extends RouteComponentProps {
   store: RootStore;
 }
 
@@ -85,6 +86,7 @@ export class UploadForm extends React.Component<Props, State> {
 
     if (!this.props.store.upload.uploadMetadataError) {
       message.success('Your file has been listed!');
+      this.props.history.push('/');
     }
   };
 
@@ -128,6 +130,7 @@ export class UploadForm extends React.Component<Props, State> {
                   optionFilterProp="children"
                   value={value.category}
                   onChange={category => this.handleChange({ ...value, category })}
+                  disabled={upload.isUploadingFileData}
                 >
                   <Option value="Document">Document</Option>
                   <Option value="Audio">Audio</Option>
@@ -189,6 +192,7 @@ export class UploadForm extends React.Component<Props, State> {
               block
               onClick={this.upload}
               disabled={disabled}
+              loading={upload.isUploadingMetadata}
             >
               Submit Your File
             </Button>

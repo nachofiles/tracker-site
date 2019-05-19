@@ -255,6 +255,7 @@ export class InodeDatabase {
     const bytes32Hash = getBytes32FromIpfsHash(ipfsMultihash);
 
     const contract = await getSignerTrackerContract(this.contractAddress);
-    await contract.functions.addFile(bytes32Hash);
+    const request = await contract.functions.addFile(bytes32Hash);
+    await request.wait();
   }
 }
