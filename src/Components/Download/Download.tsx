@@ -6,6 +6,7 @@ import { inject, observer } from "mobx-react";
 import { RootStore } from "../../store/rootStore";
 import download from "in-browser-download";
 import filesize from 'filesize';
+import EnsResolver from '../EnsResolver/EnsResolver';
 
 const { Title } = Typography;
 
@@ -44,7 +45,7 @@ export class Download extends React.Component<Props> {
               <div className="Download-header-created">
                 Uploaded at {new Date(downloadStore.filemetaData.createdAt).toLocaleString()}
                 <div className="Download-author">
-                  By {downloadStore.filemetaData.author}
+                  By <EnsResolver address={downloadStore.filemetaData.author}/>
                 </div>
               </div>
             </div>
