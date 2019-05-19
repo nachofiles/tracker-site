@@ -218,7 +218,7 @@ export class InodeDatabase {
   }
 
   async addFile(file: File) {
-    const [addDataRes] = await this.ipfs.files.add(file);
+    const [addDataRes] = await (this.ipfs as any).add(file);
 
     await this.add({
       title: file.name,
@@ -230,7 +230,7 @@ export class InodeDatabase {
   async add(args: IFileMetadata) {
     const metadataBytes = FileMetadata.encode(args).finish();
 
-    const ipfsResults = await this.ipfs.files.add(metadataBytes);
+    const ipfsResults = await (this.ipfs as any).add(metadataBytes);
 
     const ipfsMultihash = ipfsResults[0].hash;
 
