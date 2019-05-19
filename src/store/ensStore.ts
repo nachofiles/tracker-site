@@ -26,14 +26,13 @@ export class EnsStore {
     this.isLoading = { ...this.isLoading, [ address ]: true };
     this.promises[ address ] = db.resolveAddress(address);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
     try {
       this.ensNames = { ...this.ensNames, [ address ]: await this.promises[ address ] };
       this.isLoading = { ...this.isLoading, [ address ]: false };
     } catch (error) {
       console.info('failed to ens name for lookup address', address);
-      delete this.promises[ address ];
+      // to try again, uncomment this line
+      // delete this.promises[ address ];
       this.isLoading = { ...this.isLoading, [ address ]: false };
     }
   }
