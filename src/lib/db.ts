@@ -73,7 +73,7 @@ export class FileMetadataDatabase {
     this.ipfs = ipfs;
   }
 
-  public async init() {
+  private async init() {
     if (this.initialized) {
       return;
     }

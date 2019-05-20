@@ -70,7 +70,6 @@ export class FileMetadataStore {
   public async getDb(): Promise<FileMetadataDatabase> {
     if (!this.db) {
       this.db = new FileMetadataDatabase(this.ipfsClient);
-      await this.db.init();
     }
 
     return this.db;
