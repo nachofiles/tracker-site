@@ -49,9 +49,9 @@ export class FileMetadataStore {
   private rootStore: RootStore;
   private db: FileMetadataDatabase | undefined;
   private ipfsClient = new IpfsClient(
-    'ec2-34-229-138-23.compute-1.amazonaws.com',
+    'ipfs.infura.io',
     '5001',
-    { protocol: 'http' }
+    { protocol: 'https' }
   );
 
   constructor(

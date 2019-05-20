@@ -55,7 +55,7 @@ class HomePage extends React.Component<Props> {
               </li>
               <li>
                 <Popconfirm title="Reset file database?" onConfirm={this.clearDb}>
-                  <a href="#">Reset database</a>
+                  Reset database
                 </Popconfirm>
               </li>
             </ul>

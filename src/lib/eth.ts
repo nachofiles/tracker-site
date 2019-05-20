@@ -1,7 +1,7 @@
 import * as ethers from 'ethers';
 import { abi, networks } from '@ethny-tracker/tracker-contracts/build/contracts/Tracker.json';
 import { Tracker } from '@ethny-tracker/tracker-contracts/build/types/ethers/Tracker';
-import { Provider, Web3Provider } from 'ethers/providers';
+import { Provider } from 'ethers/providers';
 
 const w = window as { ethereum?: any };
 
