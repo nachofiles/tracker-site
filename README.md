@@ -1,5 +1,7 @@
 <img src="https://i.imgur.com/q6a1yuM.png" width="200" />
 
+[![Build Status](https://travis-ci.org/nachofiles/tracker-site.svg?branch=master)](https://travis-ci.org/nachofiles/tracker-site)
+
 Store your files fo'eva on IPFS, in an indexed and browsable ways. Uncensorable and unstoppable, since the data is stored in an Ethereum smart contract!
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and made for the [ETH New York hackathon](http://ethnewyork.com).
