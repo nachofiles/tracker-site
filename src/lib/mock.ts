@@ -1,4 +1,4 @@
-import { Inode } from './db';
+import { IpfsFileMetadata } from './db';
 
 const categories = [
   'Book',
@@ -28,7 +28,7 @@ async function generateTitle(): Promise<string> {
   return data.phrase;
 }
 
-export async function generateInode(): Promise<Inode> {
+export async function generateInode(): Promise<IpfsFileMetadata> {
   const inode = {
     id: Math.floor(Math.random() * 10000000000000000).toString(16),
     description: 'Lorem ipsum etc. etc.',

@@ -7,10 +7,10 @@ import { RootStore } from '../../store/rootStore';
 import { ColumnProps } from 'antd/lib/table';
 import filesize from 'filesize';
 import { Link } from 'react-router-dom';
-import { Inode } from '../../lib/db';
+import { IpfsFileMetadata } from '../../lib/db';
 import EnsResolver, { TruncatedText } from '../EnsResolver/EnsResolver';
 
-const columns: ColumnProps<Inode>[] = [
+const columns: ColumnProps<IpfsFileMetadata>[] = [
   {
     title: 'Title',
     dataIndex: 'title',

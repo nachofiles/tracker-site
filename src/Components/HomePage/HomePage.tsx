@@ -1,11 +1,11 @@
-import React from "react";
-import { RouteComponentProps } from "react-router";
-import { Input, Popconfirm, Icon, message } from "antd";
-import { TitleBar } from "../AppHeader/AppHeader";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { RouteComponentProps } from 'react-router';
+import { Input, Popconfirm } from 'antd';
+import { TitleBar } from '../AppHeader/AppHeader';
+import { Link } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { RootStore } from '../../store/rootStore';
-import "./HomePage.css";
+import './HomePage.css';
 
 interface Props extends RouteComponentProps {
   store: RootStore;
@@ -35,9 +35,9 @@ class HomePage extends React.Component<Props> {
 
     return (
       <div className="HomePage-container">
-        <div style={{ width: "100%", maxWidth: 800, padding: 20 }}>
+        <div style={{ width: '100%', maxWidth: 800, padding: 20 }}>
           <div>
-            <TitleBar onClick={() => this.props.history.push("/")} />
+            <TitleBar onClick={() => this.props.history.push('/')}/>
           </div>
           <Input.Search
             className="HomePage-search"
@@ -54,8 +54,8 @@ class HomePage extends React.Component<Props> {
                 <Link to="/upload">Upload file</Link>
               </li>
               <li>
-                <Popconfirm title="Clear & redownload file database?" onConfirm={this.clearDb}>
-                  <a>Clear database</a>
+                <Popconfirm title="Reset file database?" onConfirm={this.clearDb}>
+                  <a href="#">Reset database</a>
                 </Popconfirm>
               </li>
             </ul>

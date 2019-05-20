@@ -1,10 +1,10 @@
-import { RootStore } from "./rootStore";
-import { Inode } from "../lib/db";
-import { observable } from "mobx";
+import { RootStore } from './rootStore';
+import { IpfsFileMetadata } from '../lib/db';
+import { observable } from 'mobx';
 
 export class DownloadStore {
   @observable
-  public filemetaData: Inode | null = null;
+  public filemetaData: IpfsFileMetadata | null = null;
 
   private rootStore: RootStore;
 
@@ -20,9 +20,9 @@ export class DownloadStore {
     }
   }
 
-  public async getFile(cid: string) {
+  public async getFileContent(cid: string): Promise<Uint8Array> {
     const db = await this.rootStore.inode.getDb();
-    const file = await db.getFile(cid);
-    return file;
+
+    return db.getFileContent(cid);
   }
 }

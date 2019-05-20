@@ -73,7 +73,7 @@ export class Download extends React.Component<Props> {
               icon="download"
               block
               onClick={async () => {
-                const buf = await downloadStore.getFile(
+                const buf = await downloadStore.getFileContent(
                   downloadStore.filemetaData!.dataUri.replace("ipfs://", "")
                 );
                 download(

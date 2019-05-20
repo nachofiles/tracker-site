@@ -29,7 +29,7 @@ class EnsResolver extends React.Component<{ address: string, store?: RootStore }
 
     if (name) {
       return (
-        <a href={`https://manager.ens.domains/name/${name}`} rel="nofollow noopener" target="_blank">
+        <a href={`https://manager.ens.domains/name/${name}`} rel="noopener noreferrer" target="_blank">
           {name}
         </a>
       );

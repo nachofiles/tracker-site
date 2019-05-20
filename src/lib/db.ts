@@ -1,11 +1,10 @@
-import Dexie from "dexie";
-import IPFS from "typestub-ipfs";
-import bs58 from "bs58";
-import { getSignerTrackerContract, getTrackerContract } from "./eth";
-import { FileMetadata, IFileMetadata } from "@ethny-tracker/tracker-protos";
-import blobToBuffer from "blob-to-buffer";
+import Dexie from 'dexie';
+import { getSignerTrackerContract, getTrackerContract } from './eth';
+import { FileMetadata, IFileMetadata } from '@ethny-tracker/tracker-protos';
+import blobToBuffer from 'blob-to-buffer';
+import { getBytes32FromIpfsHash, getIpfsHashFromBytes32, Multihash } from './util/hash';
 
-export interface Inode {
+export interface IpfsFileMetadata {
   id: string;
   title: string;
   description: string;
@@ -17,7 +16,7 @@ export interface Inode {
   dataUri: string;
 }
 
-export interface Pageable<T> {
+export interface Page<T> {
   data: T[];
   total: number;
   end: boolean;
@@ -28,58 +27,42 @@ export interface SyncState {
   total: number;
 }
 
-export type SyncUpdate = SyncState;
-
-export type SyncUpdateCallback = (err?: Error, data?: SyncUpdate) => void;
-
-function getBytes32FromIpfsHash(ipfsListing: string) {
-  return (
-    "0x" +
-    bs58
-      .decode(ipfsListing)
-      .slice(2)
-      .toString("hex")
-  );
-}
-
-function getIpfsHashFromBytes32(bytes32Hex: string) {
-  // Add our default ipfs values for first 2 bytes:
-  // function:0x12=sha2, size:0x20=256 bits
-  // and cut off leading "0x"
-  const hashHex = "1220" + bytes32Hex.slice(2);
-  const hashBytes = Buffer.from(hashHex, "hex");
-  return bs58.encode(hashBytes);
-}
+export type SyncUpdateCallback = (err: Error | null, data: SyncState) => void;
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-class InodeDexie extends Dexie {
-  inodes: Dexie.Table<Inode, string>;
+class IpfsFileDexie extends Dexie {
+  ipfsFiles: Dexie.Table<IpfsFileMetadata, string>;
 
   constructor(name: string) {
     super(name);
     this.version(1).stores({
-      inodes: [
-        "id",
-        "title",
-        "description",
-        "category",
-        "mimeType",
-        "sizeBytes",
-        "author",
-        "dataUri",
-        "createdAt"
-      ].join(",")
+      ipfsFiles: [
+        'id',
+        'title',
+        'description',
+        'category',
+        'mimeType',
+        'sizeBytes',
+        'author',
+        'dataUri',
+        'createdAt'
+      ].join(',')
     });
-    this.inodes = this.table("inodes");
+    this.ipfsFiles = this.table('ipfsFiles');
   }
 }
 
-export class InodeDatabase {
+interface IPFS {
+  cat: (multihash: Multihash) => Buffer;
+  add: (buffer: Buffer) => Promise<[ { hash: string } ]>;
+}
+
+export class FileMetadataDatabase {
   private contractAddress: string;
-  private db: InodeDexie;
+  private db: IpfsFileDexie;
   private numSynced: number = 0;
   private total: number = 0;
   private ipfs: IPFS;
@@ -89,9 +72,9 @@ export class InodeDatabase {
     this.contractAddress = contractAddress;
     this.contract = getTrackerContract(this.contractAddress);
 
-    this.db = new InodeDexie(`inodes-${contractAddress}`);
+    this.db = new IpfsFileDexie(`inodes-${contractAddress}`);
     this.numSynced = parseInt(
-      localStorage.getItem(`inodes-index-${contractAddress}`) || "0",
+      localStorage.getItem(`inodes-index-${contractAddress}`) || '0',
       10
     );
     this.ipfs = ipfs;
@@ -107,13 +90,15 @@ export class InodeDatabase {
     };
   }
 
-  async startSync(cb: SyncUpdateCallback, shouldPoll = false) {
+  async startSync(cb: SyncUpdateCallback) {
     const total = await this.contract.functions.numFileMetadata();
     this.total = total.toNumber();
 
     for (let i = this.numSynced; i < this.total; i++) {
       const metaData = await this.contract.functions.allFileMetadata(i);
+
       const cid = getIpfsHashFromBytes32(metaData.ipfsHash);
+
       localStorage.setItem(
         `inodes-index-${this.contractAddress}`,
         `${++this.numSynced}`
@@ -121,15 +106,15 @@ export class InodeDatabase {
 
       try {
         const metaFile = await Promise.race([
-          (this.ipfs as any).cat(cid),
+          this.ipfs.cat(cid),
           sleep(1000)
         ]);
         if (!metaFile) {
-          throw Error(`Error fetching metafile: ${cid}`);
+          throw new Error(`Error fetching metafile: ${cid}`);
         }
 
         const meta = FileMetadata.decode(metaFile as Uint8Array);
-        await this.db.inodes.add({
+        await this.db.ipfsFiles.add({
           ...meta,
           id: cid,
           dataUri: meta.uri,
@@ -139,7 +124,7 @@ export class InodeDatabase {
           sizeBytes: meta.sizeBytes as any
         });
 
-        cb(undefined, {
+        cb(null, {
           numSynced: this.numSynced,
           total: this.total
         });
@@ -150,28 +135,20 @@ export class InodeDatabase {
         });
       }
     }
-
-    if (shouldPoll) {
-      console.log("polling for new changes...");
-      window.setTimeout(() => {
-        this.startSync(cb, true);
-      }, 250);
-    }
   }
 
-  // TODO: handle the data
-  listen() {
+  listenForNewMetadata() {
     this.contract.addListener(
       this.contract.filters.FileMetadataAdded(null, null, null, null),
       data => {
-        console.log("contract listening filter", data);
+        console.log('contract listening filter', data);
       }
     );
   }
 
   async clearData(): Promise<void> {
     await this.db.delete();
-    this.db = new InodeDexie(`inodes-${this.contractAddress}`);
+    this.db = new IpfsFileDexie(`inodes-${this.contractAddress}`);
     localStorage.removeItem(`inodes-index-${this.contractAddress}`);
   }
 
@@ -179,17 +156,17 @@ export class InodeDatabase {
     query: string,
     limit: number = 10,
     offset: number = 0
-  ): Promise<Pageable<Inode>> {
+  ): Promise<Page<IpfsFileMetadata>> {
     const filterString = query
       .toLowerCase()
       .trim()
       .split(/\s+/)
-      .join(" ");
-    const inodes = this.db.inodes.filter(inode =>
+      .join(' ');
+    const ipfsFiles = this.db.ipfsFiles.filter(inode =>
       inode.title.toLowerCase().includes(filterString)
     );
-    const total = await inodes.count();
-    const data = await inodes
+    const total = await ipfsFiles.count();
+    const data = await ipfsFiles
       .offset(offset)
       .limit(limit)
       .toArray();
@@ -205,10 +182,10 @@ export class InodeDatabase {
   async latest(
     limit: number = 10,
     offset: number = 0
-  ): Promise<Pageable<Inode>> {
-    const inodes = this.db.inodes.orderBy("createdAt");
-    const total = await inodes.count();
-    const data = await inodes
+  ): Promise<Page<IpfsFileMetadata>> {
+    const ipfsFiles = this.db.ipfsFiles.orderBy('createdAt');
+    const total = await ipfsFiles.count();
+    const data = await ipfsFiles
       .offset(offset)
       .limit(limit)
       .toArray();
@@ -223,7 +200,7 @@ export class InodeDatabase {
 
   async addFile(file: File) {
     const buf = await this.toBufferAsync(file);
-    const [addDataRes] = await (this.ipfs as any).add(buf);
+    const [ addDataRes ] = await this.ipfs.add(buf);
     return addDataRes.hash;
   }
 
@@ -240,29 +217,28 @@ export class InodeDatabase {
   }
 
   public getFileMetadata(cid: string) {
-    return this.db.inodes.get(cid);
+    return this.db.ipfsFiles.get(cid);
   }
 
-  public async getFile(cid: string) {
-    const data: Uint8Array = await (this.ipfs as any).cat(cid);
-    console.log(data);
-    return data;
+  public async getFileContent(cid: string): Promise<Uint8Array> {
+    return this.ipfs.cat(cid);
   }
 
   // Assumes base58 ipfs hash
   async add(args: IFileMetadata) {
     const metadataBytes = FileMetadata.encode(args).finish();
 
-    const ipfsResults = await (this.ipfs as any).add(
+    const ipfsResults = await this.ipfs.add(
       Buffer.from(metadataBytes)
     );
 
-    const ipfsMultihash = ipfsResults[0].hash;
+    const ipfsMultihash = ipfsResults[ 0 ].hash;
 
     const bytes32Hash = getBytes32FromIpfsHash(ipfsMultihash);
 
     const contract = await getSignerTrackerContract(this.contractAddress);
     const request = await contract.functions.addFile(bytes32Hash);
+
     await request.wait();
   }
 
