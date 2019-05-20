@@ -13,7 +13,7 @@ export class DownloadStore {
   }
 
   public async getFileMetadata(cid: string) {
-    const db = await this.rootStore.inode.getDb();
+    const db = await this.rootStore.fileMetadata.getDb();
     const metadata = await db.getFileMetadata(cid);
     if (metadata) {
       this.filemetaData = metadata;
@@ -21,7 +21,7 @@ export class DownloadStore {
   }
 
   public async getFileContent(cid: string): Promise<Uint8Array> {
-    const db = await this.rootStore.inode.getDb();
+    const db = await this.rootStore.fileMetadata.getDb();
 
     return db.getFileContent(cid);
   }

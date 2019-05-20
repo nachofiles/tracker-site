@@ -22,7 +22,7 @@ interface UpdateSearchResultsAction {
   total: number;
 }
 
-export class InodeStore {
+export class FileMetadataStore {
   // search state
 
   // results of the search request
@@ -48,7 +48,6 @@ export class InodeStore {
   // internal
   private rootStore: RootStore;
   private db: FileMetadataDatabase | undefined;
-  private contractAddress: string;
   private ipfsClient = new IpfsClient(
     'ec2-34-229-138-23.compute-1.amazonaws.com',
     '5001',
@@ -57,7 +56,6 @@ export class InodeStore {
 
   constructor(
     rootStore: RootStore,
-    contractAddress: string,
     resultsPerPage: number,
     autoSync: boolean = false
   ) {
@@ -65,23 +63,19 @@ export class InodeStore {
     (window as any).db = this.db;
     this.resultsPerPage = resultsPerPage;
     this.rootStore = rootStore;
-    this.contractAddress = contractAddress;
 
     if (autoSync) {
       this.syncWatcher();
     }
   }
 
-  public getDb(): Promise<FileMetadataDatabase> {
-    return new Promise(resolve => {
-      if (!this.db) {
-        this.db = new FileMetadataDatabase(this.contractAddress, this.ipfsClient);
-        console.log(this.ipfsClient.files);
-        resolve(this.db);
-      } else {
-        resolve(this.db);
-      }
-    });
+  public async getDb(): Promise<FileMetadataDatabase> {
+    if (!this.db) {
+      this.db = new FileMetadataDatabase(this.ipfsClient);
+      await this.db.init();
+    }
+
+    return this.db;
   }
 
   @computed
@@ -103,7 +97,7 @@ export class InodeStore {
         totalInodes: syncState.total
       });
 
-      db.startSync((err: Error | null, syncState: SyncState) => {
+      await db.startSync((err: Error | null, syncState: SyncState) => {
         if (err) {
           console.warn('Error while syncing:', err);
         }
@@ -134,7 +128,7 @@ export class InodeStore {
   }
 
   /**
-   * Search for paginated inode results
+   * Search for paginated fileMetadata results
    * @param params Search parameters
    */
   public async search(params: SearchParams): Promise<void> {
@@ -154,7 +148,7 @@ export class InodeStore {
   }
 
   /**
-   * Get the latest paginated inode results
+   * Get the latest paginated fileMetadata results
    * @param params Pagination parameters
    */
   public async getLatest(params: GetLatestParams) {

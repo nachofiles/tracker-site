@@ -106,7 +106,7 @@ export class SearchResults extends React.Component<Props, State> {
   }
 
   private get inodeStore() {
-    return this.props.store.inode;
+    return this.props.store.fileMetadata;
   }
 
   private getQuery() {
@@ -127,7 +127,7 @@ export class SearchResults extends React.Component<Props, State> {
               total: this.inodeStore.total,
               onChange: page => this.setState({ currPage: page })
             }}
-            loading={this.props.store.inode.loadingSearchResults}
+            loading={this.props.store.fileMetadata.loadingSearchResults}
             rowKey="id"
           />
         </div>

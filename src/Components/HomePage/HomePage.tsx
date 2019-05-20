@@ -15,22 +15,22 @@ interface Props extends RouteComponentProps {
 @observer
 class HomePage extends React.Component<Props> {
   private clearDb = async () => {
-    await this.props.store.inode.clear();
+    await this.props.store.fileMetadata.clear();
     window.location.reload();
   };
 
   render() {
-    const { inode } = this.props.store;
+    const { fileMetadata } = this.props.store;
 
     let syncText;
-    if (inode.syncError) {
-      syncText = <span className="error">{inode.syncError.message}</span>;
-    } else if (inode.totalInodesToSync === Infinity) {
+    if (fileMetadata.syncError) {
+      syncText = <span className="error">{fileMetadata.syncError.message}</span>;
+    } else if (fileMetadata.totalInodesToSync === Infinity) {
       syncText = '';
-    } else if (inode.inodesSynced === inode.totalInodesToSync) {
+    } else if (fileMetadata.inodesSynced === fileMetadata.totalInodesToSync) {
       syncText = 'Fully synced!';
     } else {
-      syncText = `Synced ${inode.inodesSynced} of ${inode.totalInodesToSync}`;
+      syncText = `Synced ${fileMetadata.inodesSynced} of ${fileMetadata.totalInodesToSync}`;
     }
 
     return (

@@ -3,6 +3,7 @@ import { getSignerTrackerContract, getTrackerContract } from './eth';
 import { FileMetadata, IFileMetadata } from '@ethny-tracker/tracker-protos';
 import blobToBuffer from 'blob-to-buffer';
 import { getBytes32FromIpfsHash, getIpfsHashFromBytes32, Multihash } from './util/hash';
+import { Tracker } from '@ethny-tracker/tracker-contracts/build/types/ethers/Tracker';
 
 export interface IpfsFileMetadata {
   id: string;
@@ -61,27 +62,24 @@ interface IPFS {
 }
 
 export class FileMetadataDatabase {
-  private contractAddress: string;
-  private db: IpfsFileDexie;
   private numSynced: number = 0;
   private total: number = 0;
   private ipfs: IPFS;
-  private contract: ReturnType<typeof getTrackerContract>;
+  private contract: Tracker | null = null;
+  private db: IpfsFileDexie | null = null;
 
-  constructor(contractAddress: string, ipfs: IPFS) {
-    this.contractAddress = contractAddress;
-    this.contract = getTrackerContract(this.contractAddress);
-
-    this.db = new IpfsFileDexie(`inodes-${contractAddress}`);
-    this.numSynced = parseInt(
-      localStorage.getItem(`inodes-index-${contractAddress}`) || '0',
-      10
-    );
+  constructor(ipfs: IPFS) {
     this.ipfs = ipfs;
   }
 
+  public async init() {
+    this.contract = await getTrackerContract();
+    this.db = new IpfsFileDexie(`inodes-${this.contract.address}`);
+    this.numSynced = parseInt(localStorage.getItem(`inodes-index-${this.contract.address}`) || '0', 10);
+  }
+
   async getSyncState(): Promise<SyncState> {
-    const total = await this.contract.functions.numFileMetadata();
+    const total = await this.contract!.functions.numFileMetadata();
     this.total = total.toNumber();
 
     return {
@@ -90,17 +88,19 @@ export class FileMetadataDatabase {
     };
   }
 
-  async startSync(cb: SyncUpdateCallback) {
-    const total = await this.contract.functions.numFileMetadata();
+  async startSync(cb: SyncUpdateCallback): Promise<void> {
+    const contract = this.contract!;
+    const db = this.db!;
+    const total = await contract.functions.numFileMetadata();
     this.total = total.toNumber();
 
     for (let i = this.numSynced; i < this.total; i++) {
-      const metaData = await this.contract.functions.allFileMetadata(i);
+      const metaData = await contract.functions.allFileMetadata(i);
 
       const cid = getIpfsHashFromBytes32(metaData.ipfsHash);
 
       localStorage.setItem(
-        `inodes-index-${this.contractAddress}`,
+        `inodes-index-${contract.address}`,
         `${++this.numSynced}`
       );
 
@@ -114,7 +114,7 @@ export class FileMetadataDatabase {
         }
 
         const meta = FileMetadata.decode(metaFile as Uint8Array);
-        await this.db.ipfsFiles.add({
+        await db.ipfsFiles.add({
           ...meta,
           id: cid,
           dataUri: meta.uri,
@@ -138,8 +138,8 @@ export class FileMetadataDatabase {
   }
 
   listenForNewMetadata() {
-    this.contract.addListener(
-      this.contract.filters.FileMetadataAdded(null, null, null, null),
+    this.contract!.addListener(
+      this.contract!.filters.FileMetadataAdded(null, null, null, null),
       data => {
         console.log('contract listening filter', data);
       }
@@ -147,9 +147,9 @@ export class FileMetadataDatabase {
   }
 
   async clearData(): Promise<void> {
-    await this.db.delete();
-    this.db = new IpfsFileDexie(`inodes-${this.contractAddress}`);
-    localStorage.removeItem(`inodes-index-${this.contractAddress}`);
+    await this.db!.delete();
+    this.db = new IpfsFileDexie(`inodes-${this.contract!.address}`);
+    localStorage.removeItem(`inodes-index-${this.contract!.address}`);
   }
 
   async search(
@@ -162,7 +162,7 @@ export class FileMetadataDatabase {
       .trim()
       .split(/\s+/)
       .join(' ');
-    const ipfsFiles = this.db.ipfsFiles.filter(inode =>
+    const ipfsFiles = this.db!.ipfsFiles.filter(inode =>
       inode.title.toLowerCase().includes(filterString)
     );
     const total = await ipfsFiles.count();
@@ -183,7 +183,7 @@ export class FileMetadataDatabase {
     limit: number = 10,
     offset: number = 0
   ): Promise<Page<IpfsFileMetadata>> {
-    const ipfsFiles = this.db.ipfsFiles.orderBy('createdAt');
+    const ipfsFiles = this.db!.ipfsFiles.orderBy('createdAt');
     const total = await ipfsFiles.count();
     const data = await ipfsFiles
       .offset(offset)
@@ -217,15 +217,15 @@ export class FileMetadataDatabase {
   }
 
   public getFileMetadata(cid: string) {
-    return this.db.ipfsFiles.get(cid);
+    return this.db!.ipfsFiles.get(cid);
   }
 
   public async getFileContent(cid: string): Promise<Uint8Array> {
     return this.ipfs.cat(cid);
   }
 
-  // Assumes base58 ipfs hash
-  async add(args: IFileMetadata) {
+  // Add a file metadata object to the database.
+  async addFileMetadata(args: IFileMetadata) {
     const metadataBytes = FileMetadata.encode(args).finish();
 
     const ipfsResults = await this.ipfs.add(
@@ -236,13 +236,13 @@ export class FileMetadataDatabase {
 
     const bytes32Hash = getBytes32FromIpfsHash(ipfsMultihash);
 
-    const contract = await getSignerTrackerContract(this.contractAddress);
+    const contract = await getSignerTrackerContract();
     const request = await contract.functions.addFile(bytes32Hash);
 
     await request.wait();
   }
 
   public resolveAddress(address: string) {
-    return this.contract.provider.lookupAddress(address);
+    return this.contract!.provider.lookupAddress(address);
   }
 }

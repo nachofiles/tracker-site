@@ -22,7 +22,7 @@ export class UploadStore {
   public fileHash = "";
 
   public async uploadFileData(file: File) {
-    const db = await this.rootStore.inode.getDb();
+    const db = await this.rootStore.fileMetadata.getDb();
     this.fileHash = '';
     this.file = null;
     this.isUploadingFileData = true;
@@ -38,12 +38,12 @@ export class UploadStore {
   }
 
   public async uploadFileMetadata(node: IFileMetadata) {
-    const db = await this.rootStore.inode.getDb();
+    const db = await this.rootStore.fileMetadata.getDb();
     this.isUploadingMetadata = true;
     this.uploadMetadataError = null;
 
     try {
-      await db.add(node);
+      await db.addFileMetadata(node);
     } catch (error) {
       this.uploadMetadataError = error;
     }

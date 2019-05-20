@@ -1,29 +1,63 @@
 import * as ethers from 'ethers';
-import TrackersJSON from '@ethny-tracker/tracker-contracts/build/contracts/Tracker.json';
+import { abi, networks } from '@ethny-tracker/tracker-contracts/build/contracts/Tracker.json';
 import { Tracker } from '@ethny-tracker/tracker-contracts/build/types/ethers/Tracker';
+import { Provider, Web3Provider } from 'ethers/providers';
 
 const w = window as { ethereum?: any };
 
-const _defaultNetwork = 'ropsten';
+const DEFAULT_NETWORK_FOR_FALLBACK = 'ropsten';
 
-export function getTrackerContract(address: string) {
-  let provider: ethers.providers.Provider;
+let provider: Provider | null = null;
+
+/**
+ * Return the singleton provider.
+ */
+export async function getEthereumProvider(): Promise<Provider> {
+  if (provider !== null) {
+    return provider;
+  }
 
   if (w.ethereum) {
-    provider = new ethers.providers.Web3Provider(w.ethereum, _defaultNetwork);
+    provider = new ethers.providers.Web3Provider(w.ethereum);
   } else {
-    provider = ethers.getDefaultProvider(_defaultNetwork);
+    provider = ethers.getDefaultProvider(DEFAULT_NETWORK_FOR_FALLBACK);
   }
 
-  return new ethers.Contract(address, TrackersJSON.abi, provider) as Tracker;
+  return provider;
 }
 
-export async function getSignerTrackerContract(address: string) {
-  if (!w.ethereum) {
-    throw new Error('Must have a Web3 client (MetaMask, Dapper, etc.');
+/**
+ * Return a reference to the tracker contract on the current network.
+ */
+export async function getTrackerContract(): Promise<Tracker> {
+  const provider: ethers.providers.Provider = await getEthereumProvider();
+
+  const network = await provider.getNetwork();
+
+  const chainIdString: string = '' + network.chainId;
+
+  if (!(networks as any)[ chainIdString ]) {
+    throw new Error('Tracker is not deployed on the selected network.');
+  } else {
+    const address: string = (networks as any)[ chainIdString ].address;
+
+    return new ethers.Contract(address, abi, provider) as Tracker;
   }
-  const [ account ] = await w.ethereum.enable();
-  const provider = new ethers.providers.Web3Provider(w.ethereum);
-  const signer = provider.getSigner(account);
-  return new ethers.Contract(address, TrackersJSON.abi, signer) as Tracker;
+}
+
+/**
+ * Returns the tracker contract with a signer, if available. Otherwise rejects.
+ */
+export async function getSignerTrackerContract(): Promise<Tracker> {
+  const provider = await getEthereumProvider();
+
+  if (provider instanceof Web3Provider) {
+    const [ account ] = await w.ethereum.enable();
+
+    const trackerContract = await getTrackerContract();
+
+    return trackerContract.connect(provider.getSigner(account)) as Tracker;
+  } else {
+    throw new Error('Must have a Web3 client to create transactions (e.g. MetaMask, Dapper, ...)');
+  }
 }

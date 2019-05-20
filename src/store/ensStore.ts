@@ -21,7 +21,7 @@ export class EnsStore {
       return;
     }
 
-    const db = await this.rootStore.inode.getDb();
+    const db = await this.rootStore.fileMetadata.getDb();
 
     this.isLoading = { ...this.isLoading, [ address ]: true };
     this.promises[ address ] = db.resolveAddress(address);
