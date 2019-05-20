@@ -59,8 +59,6 @@ export class FileMetadataStore {
     resultsPerPage: number,
     autoSync: boolean = false
   ) {
-    // delete me
-    (window as any).db = this.db;
     this.resultsPerPage = resultsPerPage;
     this.rootStore = rootStore;
 

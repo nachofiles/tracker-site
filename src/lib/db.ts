@@ -67,18 +67,27 @@ export class FileMetadataDatabase {
   private ipfs: IPFS;
   private contract: Tracker | null = null;
   private db: IpfsFileDexie | null = null;
+  private initialized: boolean = false;
 
   constructor(ipfs: IPFS) {
     this.ipfs = ipfs;
   }
 
   public async init() {
+    if (this.initialized) {
+      return;
+    }
+
     this.contract = await getTrackerContract();
     this.db = new IpfsFileDexie(`inodes-${this.contract.address}`);
     this.numSynced = parseInt(localStorage.getItem(`inodes-index-${this.contract.address}`) || '0', 10);
+
+    this.initialized = true;
   }
 
   async getSyncState(): Promise<SyncState> {
+    await this.init();
+
     const total = await this.contract!.functions.numFileMetadata();
     this.total = total.toNumber();
 
@@ -89,6 +98,8 @@ export class FileMetadataDatabase {
   }
 
   async startSync(cb: SyncUpdateCallback): Promise<void> {
+    await this.init();
+
     const contract = this.contract!;
     const db = this.db!;
     const total = await contract.functions.numFileMetadata();
@@ -137,7 +148,9 @@ export class FileMetadataDatabase {
     }
   }
 
-  listenForNewMetadata() {
+  async listenForNewMetadata() {
+    await this.init();
+
     this.contract!.addListener(
       this.contract!.filters.FileMetadataAdded(null, null, null, null),
       data => {
@@ -147,6 +160,8 @@ export class FileMetadataDatabase {
   }
 
   async clearData(): Promise<void> {
+    await this.init();
+
     await this.db!.delete();
     this.db = new IpfsFileDexie(`inodes-${this.contract!.address}`);
     localStorage.removeItem(`inodes-index-${this.contract!.address}`);
@@ -157,6 +172,8 @@ export class FileMetadataDatabase {
     limit: number = 10,
     offset: number = 0
   ): Promise<Page<IpfsFileMetadata>> {
+    await this.init();
+
     const filterString = query
       .toLowerCase()
       .trim()
@@ -183,6 +200,8 @@ export class FileMetadataDatabase {
     limit: number = 10,
     offset: number = 0
   ): Promise<Page<IpfsFileMetadata>> {
+    await this.init();
+
     const ipfsFiles = this.db!.ipfsFiles.orderBy('createdAt');
     const total = await ipfsFiles.count();
     const data = await ipfsFiles
@@ -199,6 +218,8 @@ export class FileMetadataDatabase {
   }
 
   async addFile(file: File) {
+    await this.init();
+
     const buf = await this.toBufferAsync(file);
     const [ addDataRes ] = await this.ipfs.add(buf);
     return addDataRes.hash;
@@ -216,16 +237,22 @@ export class FileMetadataDatabase {
     });
   }
 
-  public getFileMetadata(cid: string) {
+  public async getFileMetadata(cid: string) {
+    await this.init();
+
     return this.db!.ipfsFiles.get(cid);
   }
 
   public async getFileContent(cid: string): Promise<Uint8Array> {
+    await this.init();
+
     return this.ipfs.cat(cid);
   }
 
   // Add a file metadata object to the database.
   async addFileMetadata(args: IFileMetadata) {
+    await this.init();
+
     const metadataBytes = FileMetadata.encode(args).finish();
 
     const ipfsResults = await this.ipfs.add(
@@ -242,7 +269,9 @@ export class FileMetadataDatabase {
     await request.wait();
   }
 
-  public resolveAddress(address: string) {
+  public async resolveAddress(address: string) {
+    await this.init();
+
     return this.contract!.provider.lookupAddress(address);
   }
 }
