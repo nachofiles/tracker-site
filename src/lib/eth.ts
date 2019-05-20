@@ -49,14 +49,14 @@ export async function getTrackerContract(): Promise<Tracker> {
  * Returns the tracker contract with a signer, if available. Otherwise rejects.
  */
 export async function getSignerTrackerContract(): Promise<Tracker> {
-  const provider = await getEthereumProvider();
-
-  if (provider instanceof Web3Provider) {
+  if (w.ethereum) {
     const [ account ] = await w.ethereum.enable();
 
     const trackerContract = await getTrackerContract();
 
-    return trackerContract.connect(provider.getSigner(account)) as Tracker;
+    const provider = await getEthereumProvider();
+
+    return trackerContract.connect((provider as any).getSigner(account)) as Tracker;
   } else {
     throw new Error('Must have a Web3 client to create transactions (e.g. MetaMask, Dapper, ...)');
   }
